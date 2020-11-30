@@ -12,9 +12,10 @@
 ## What is different about this installation?
 Unlike the installations in the above references, the modifications in this installation assume all nextcloud client devices to be in the home intranet, and simplifies the foot print as below
 
-1. Data is stored on a separate and dedicated disk partition on the machine where nextcloud server is running
-2. A self-signed security certificate is used
-3. DNS lookups are not used
+1. Data is stored locally on a **separate and dedicated disk partition** on the machine where the nextcloud server is running
+2. A **self-signed security certificate** is used
+3. **No DNS lookups** are used
+
 This write up is based on the actual `history` of commands executed by following a blend of the above references
 
 ---
