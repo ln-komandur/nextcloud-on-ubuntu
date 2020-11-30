@@ -1,11 +1,26 @@
-# nextcloud-on-lubuntu-20.04
-nextcloud-on-lubuntu-20.04
-
-
-# Installing nextcloud server on Lubuntu 20.04 (64bit) for use within the intranet (home network) with
+# ***Manually*** installing nextcloud server on Lubuntu 20.04 (64bit) for use within the intranet (home network)
 1. Data to be stored on a separate disk partition
 2. Using Self-signed certificate 
 3. Not using any DNS lookup
+
+## Useful references
+1. https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop
+2. https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack
+3. https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/
+4. https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html
+
+## Why install manually? ***(why not install via snap)***
+1. snapd creates loop devices for each application / package installed with it. It mounts each of those loop devices separately during boot up, slowing down the boot up itself.
+2. Disabled (unused) snap packages continue to linger around and hog disk space unless purged explicitly. Over time, on systems with smaller root partitions, these even block the booting itself.
+
+### Recommendation
+1. Stay away from snaps as much as you can. Or maintain them (by removing disabled snaps) regularly.
+
+## Software Versions
+1. Lubuntu 20.04.1 - Linux kernel 5.4.0-54-generic (64 bit)
+2. nextcloud-20.0.2 (64 bit)
+
+## Prerequisite 1 - Installing the LAMP stack
 
 The following are based on https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop
 
@@ -29,11 +44,9 @@ The following are based on https://www.linuxbabe.com/ubuntu/install-lamp-stack-u
 `sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT` - this is also covered in ufw rules
 
 
-The ufw rule is as below
+The ufw rule is added with `sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
 
-`sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
-
-`sudo ufw disable && sudo ufw enable`
+UFW is then refreshed with `sudo ufw disable && sudo ufw enable`
 
 `sudo ufw status`
 
@@ -79,8 +92,9 @@ Continuing with apache installation - setting web root (www-data) as the owner a
 
 `sudo rm /var/www/html/info.php`
    
-   
-   
+
+## Installing the nextcloud server - Part 1: terminal (command line) activities
+
 The following is based on https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack
 After downloading and verifying the nextcloud installable file, executed the following
 
@@ -92,7 +106,7 @@ After downloading and verifying the nextcloud installable file, executed the fol
 
 `sudo nano /etc/apache2/sites-available/nextcloud.conf`
 
-The below is slight different from https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack as this nextcloud installation will NOT be using a DNS look up. These lines below necessary changes based on both https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/
+The below is slightly different from https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack as this nextcloud installation will NOT be using a DNS look up. These lines below necessary changes based on both https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/
 and https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html
 
 
@@ -131,7 +145,7 @@ CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
 
 `sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT  - this is also covered in ufw rules`
 
-The ufw rules are as below
+The ufw rules are added as below
 
 `sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
 
@@ -145,7 +159,7 @@ The ufw rules are as below
 
 
 
-The below is slight different from https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack as this nextcloud installation does NOT use TLS certificates from Let's encrypt, and instead uses self-signed certificates like in https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html 
+The below is slightly different from https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack as this nextcloud installation does NOT use TLS certificates from Let's encrypt, and instead uses self-signed certificates like in https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html 
 
 `sudo a2enmod ssl`
 
@@ -153,35 +167,34 @@ The below is slight different from https://www.linuxbabe.com/ubuntu/install-next
   
 `sudo systemctl reload apache2`
 
-
-Before completing the installation through the browser, prepare the dedicated partition where nextcloud files will be saved as below
-
+## Installing the nextcloud server - Part 2: Preparing the dedicated partition to save nextclound server's data files 
+1. Create a separte disk partition of desired size and format it as `ext4` using GParted or KDE Partition Manager 
+2. Create a directory to mount that partition commonly for all users using
 `sudo mkdir /media/all-users-nextcloud-data`
-
+3. Give the ownership of that directory (to-be partition mount point) to the web-root
 `sudo chown www-data:www-data /media/all-users-nextcloud-data/ -R`
-
+4. Get the UUID of the partition using one of the below
 `ls -l /media/`
-
 `sudo blkid | grep UUID=`
-
+5. Edit fstab to include information to mount the partition at the directory
 `sudo nano /etc/fstab`
 
-added the line 'UUID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,nofail<tab>0<tab>0' at the end
+add the line 
+'UUID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,nofail<tab>0<tab>0' at the end
 
+
+6. Mount the partition now
 `sudo mount -a`
-   
-Completed the Installation in the Web Browser by accessing https://localhost/nextcloud/ and a
-
-Warning: Potential Security Risk Ahead
-Advanced
-Accept the Risk and Continue
-
-Gave the path to the data folder as /media/all-users-nextcloud-data/ 
 
 
-Increased PHP Memory Limit
-  
+7. Increase PHP Memory Limit to 512M
   
 `cat /etc/php/7.4/apache2/php.ini | grep 128`
 
 `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini`
+
+   
+## Installing the nextcloud server - Part 3: Completing the installation in the Web Browser by accessing https://localhost/nextcloud/ 
+1. Accept the Potential Security Risk Ahead from self signed security certificates that the browser warns about, and Continue
+
+2. Give the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, new username and password for nextclound e.t.c. 
