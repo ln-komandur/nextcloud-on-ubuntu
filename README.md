@@ -31,70 +31,42 @@ The following are based on https://www.linuxbabe.com/ubuntu/install-lamp-stack-u
 
 
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
-
 `sudo apt install -y apache2 apache2-utils`
-
 `systemctl status apache2`
-
 `#sudo systemctl start apache2`
-
 `sudo systemctl enable apache2`
-
 `apache2 -v`
-
 `sudo ufw status`
-
 `sudo iptables -L -n`
+`sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT` - this is also covered in UFW rules as below
 
-`sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT` - this is also covered in UFW rules
 
+`sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
 
-The UFW rule is added with `sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
-
-UFW is then refreshed with `sudo ufw disable && sudo ufw enable`
-
-`sudo ufw status`
+UFW is then refreshed with `sudo ufw disable && sudo ufw enable && sudo ufw status`
 
 `sudo iptables -L -n`
 
 Continuing with apache installation - setting web root (www-data) as the owner and group for document root (/var/www/html/)
 
 `sudo chown www-data:www-data /var/www/html/ -R`
-
 `sudo apache2ctl -t`
-
-`sudo nano /etc/apache2/conf-available/servername.conf`   and added the line 'ServerName localhost' in this file
-
+`sudo nano /etc/apache2/conf-available/servername.conf`   and add the line 'ServerName localhost' in this file
 `sudo a2enconf servername.conf`
-
 `sudo systemctl reload apache2`
-
 `sudo apache2ctl -t`
- 
 `sudo apt install mariadb-server mariadb-client`
-
 `systemctl status mariadb`
-
 `sudo systemctl start mariadb`
-
 `sudo systemctl enable mariadb`
-
 `sudo mysql_secure_installation`
-
 `sudo mariadb -u root`
-
 `mariadb --version`
-
 `sudo apt install php7.4 libapache2-mod-php7.4 php7.4-mysql php-common php7.4-cli php7.4-common php7.4-json php7.4-opcache php7.4-readline`
-
 `sudo a2enmod php7.4`
-
 `sudo systemctl restart apache2`
-
 `php --version`
-
 `sudo nano /var/www/html/info.php and pasted the line '<?php phpinfo(); ?>' into this file to see the server's PHP information in localhost/info.php`
-
 `sudo rm /var/www/html/info.php`
    
 
