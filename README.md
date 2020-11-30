@@ -1,22 +1,27 @@
 # ***Manually*** installing nextcloud server on Lubuntu 20.04 (64bit) for use within the intranet (home network)
-1. Data to be stored on a separate disk partition
-2. Using Self-signed certificate 
-3. Not using any DNS lookup
 
-## Useful references
+
+## Useful references - Courtesy credits and Gratitude
 1. https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop
 2. https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack
 3. https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/
 4. https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html
 
+## What is different about this installation?
+Unlike the installations in the above references, the modifications in this installation assume nextcloud client devices to be in the home intranet, and simplifies the foot print as below
+
+1. Data is stored on a separate disk partition on the machine where nextcloud server is running
+2. A Self-signed security certificate is used
+3. Does not use any DNS lookup
+
 ## Why install manually? ***(why not install via snap)***
 1. snapd creates loop devices for each application / package installed with it. It mounts each of those loop devices separately during boot up, slowing down the boot up itself.
 2. Disabled (unused) snap packages continue to linger around and hog disk space unless purged explicitly. Over time, on systems with smaller root partitions, these even block the booting itself.
 
-### Recommendation
+### Recommendation on snapd
 1. Stay away from snaps as much as you can. Or maintain them (by removing disabled snaps) regularly.
 
-## Software Versions
+## Software and Versions used in this installation
 1. Lubuntu 20.04.1 - Linux kernel 5.4.0-54-generic (64 bit)
 2. nextcloud-20.0.2 (64 bit)
 
@@ -41,10 +46,10 @@ The following are based on https://www.linuxbabe.com/ubuntu/install-lamp-stack-u
 
 `sudo iptables -L -n`
 
-`sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT` - this is also covered in ufw rules
+`sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT` - this is also covered in UFW rules
 
 
-The ufw rule is added with `sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
+The UFW rule is added with `sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
 
 UFW is then refreshed with `sudo ufw disable && sudo ufw enable`
 
@@ -110,12 +115,10 @@ The below is slightly different from https://www.linuxbabe.com/ubuntu/install-ne
 and https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html
 
 
-"""
+```
 Alias /nextcloud "/var/www/nextcloud/"
 ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
 CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
-
-
 <Directory /var/www/html/nextcloud/>
     Require all granted
     Options FollowSymlinks MultiViews
@@ -129,7 +132,7 @@ CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
     SetEnv HTTP_HOME /var/www/nextcloud
     Satisfy Any
 </Directory>
-"""
+```
 
 `sudo a2ensite nextcloud.conf`
 
