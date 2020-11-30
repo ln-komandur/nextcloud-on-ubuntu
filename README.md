@@ -1,5 +1,5 @@
 # ***Manually*** installed nextcloud server on Lubuntu 20.04 (64bit) for limited use within the intranet / home network
-
+---
 
 ## Useful references - Courtesy credits and Gratitude
 1. https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop
@@ -7,7 +7,7 @@
 3. https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/
 4. https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html
 
-***This write up is based on the actual `history` of commands executed by following a blend of the above references 
+---
 
 ## What is different about this installation?
 Unlike the installations in the above references, the modifications in this installation assume all nextcloud client devices to be in the home intranet, and simplifies the foot print as below
@@ -15,6 +15,9 @@ Unlike the installations in the above references, the modifications in this inst
 1. Data is stored on a separate and dedicated disk partition on the machine where nextcloud server is running
 2. A self-signed security certificate is used
 3. DNS lookups are not used
+This write up is based on the actual `history` of commands executed by following a blend of the above references
+
+---
 
 ## Why install manually? ***(why not install via snap)***
 1. snapd creates loop devices for each application / package it installs. Each of those loop devices are mounted separately during boot up, slowing down the boot up itself.
@@ -23,11 +26,15 @@ Unlike the installations in the above references, the modifications in this inst
 ### Recommendation on snapd
 1. Stay away from snaps as much as you can on low end systems. Or maintain them regularly (by removing disabled snaps e.t.c) if the system configuration can afford the inefficiences.
 
+---
+
 ## Software and Versions used in this installation
 1. Lubuntu 20.04.1 - Linux kernel 5.4.0-54-generic (64 bit)
 2. nextcloud-20.0.2 (64 bit)
 
-## Prerequisite 1 - Installing the LAMP stack
+---
+
+## Installed the LAMP stack (Prerequisite)
 
 The following are based on https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop
 
@@ -96,6 +103,7 @@ Continued with apache installation - assigned web root (www-data) as the owner a
 
 `sudo rm /var/www/html/info.php`
    
+---
 
 ## Installed nextcloud-20.0.2 server - Part 1: terminal (command line) activities
 
@@ -168,6 +176,8 @@ The below is slightly different from https://www.linuxbabe.com/ubuntu/install-ne
   
 `sudo systemctl reload apache2`
 
+---
+
 ## Installed the nextcloud server - Part 2: Prepared the dedicated partition to save nextclound server's data (user) files 
 1. Created a separte disk partition of desired size and formated it as `ext4` using GParted / KDE Partition Manager 
 2. Created a directory to mount that partition agnostic of users logged on the PC on which the nextcloud server is running
@@ -198,10 +208,16 @@ The options at the end of this line mean the following
 `cat /etc/php/7.4/apache2/php.ini | grep 128`
 
 `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini`
-   
+
+---   
+
 ## Installed the nextcloud server - Part 3: Completed the installation in the Web Browser by accessing https://localhost/nextcloud/ 
 1. Accepted the Potential Security Risk Ahead from self signed security certificates that the browser warned about, and Continued
 
 2. Gave the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also entered new username and password for nextclound
 
+---
+
 ### Successfully completed the server installation
+
+---
