@@ -21,7 +21,7 @@ Unlike the installations in the above references, the modifications in this inst
 2. Disabled (unused) snap packages continue to linger around and hog disk space in the root partition unless they are purged explicitly. Over time, on systems with smaller root partitions, these even block the booting itself.
 
 ### Recommendation on snapd
-1. Stay away from snaps as much as you can on systems on the lower end. Or maintain them (by removing disabled snaps) regularly if the system configuration can afford the inefficiences.
+1. Stay away from snaps as much as you can on low end systems. Or maintain them regularly (by removing disabled snaps e.t.c) if the system configuration can afford the inefficiences.
 
 ## Software and Versions used in this installation
 1. Lubuntu 20.04.1 - Linux kernel 5.4.0-54-generic (64 bit)
@@ -204,4 +204,4 @@ The options at the end of this line mean the following
 
 2. Gave the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also entered new username and password for nextclound
 
-### The installation was successful
+### Successfully completed the server installation
