@@ -19,7 +19,7 @@ This write up is based on the actual `history` of commands executed by following
 
 ---
 
-## Why install manually? ***(why not install via snap)***
+## Why install manually? ***(why not install via snap?)***
 1. snapd creates loop devices for each application / package it installs. Each of those loop devices are mounted separately during boot up, slowing down the boot up itself.
 2. Disabled (unused) snap packages continue to linger around and hog disk space in the root partition unless they are purged explicitly. Over time, on systems with smaller root partitions, these even block the booting itself.
 
@@ -36,7 +36,7 @@ This write up is based on the actual `history` of commands executed by following
 
 ## Installed the LAMP stack (Prerequisite)
 
-The following are based on https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop
+The following `history` of commands is based on https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop
 
 
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
@@ -107,7 +107,7 @@ Continued with apache installation - assigned web root (www-data) as the owner a
 
 ## Installed nextcloud-20.0.2 server - Part 1: terminal (command line) activities
 
-The following is based on https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack
+The following `history` of commands is based on https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack
 After downloading and verifying the nextcloud installable file, executed the following
 
 `sudo unzip ./nextcloud-installable/zip/nextcloud-20.0.2.zip -d /var/www`
@@ -218,6 +218,6 @@ The options at the end of this line mean the following
 
 ---
 
-### Successfully completed the server installation
+### Successfully installed nextcloud-20.0.2 on Lubuntu 20.04.1 (64 bit)
 
 ---
