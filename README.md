@@ -181,29 +181,27 @@ The below is slightly different from https://www.linuxbabe.com/ubuntu/install-ne
 `sudo nano /etc/fstab`
 
 and added the line 
-'UUID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0' at the end
+`UUID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` at the end of the fstab file
 
 The options at the end of this line mean the following 
-* noauto - do not mount this partition at boot time
-* nosuid - ignore / disregard the setguid (sticky bit) if set
-* nodev - cannot contain special devices as a security precaution
-* noexec - binaries cannot be executed in this partition
-* nouser - only root can mount this partition. In the current context, this setting is intentional to act like a server switch to make the data folder available to nextcloud clients only if root mounts it
-* nofail - ignore device errors if any
+* `noauto` - do not mount this partition at boot time
+* `nosuid` - ignore / disregard the setguid (sticky bit) if set
+* `nodev` - cannot contain special devices as a security precaution
+* `noexec` - binaries cannot be executed in this partition
+* `nouser` - only root can mount this partition. In the current context, this setting is intentional to act like a server switch to make the data folder available to nextcloud clients only if root mounts it
+* `nofail` - ignore device errors if any
 
-6. Mounted the partition at the new mount point
+6. Mounted the partition at the new mount point by
 `sudo mount -a`
 
-7. Increased PHP Memory Limit to 512M
-  
+7. Increased PHP Memory Limit to 512M after checking its current size to be 128M
 `cat /etc/php/7.4/apache2/php.ini | grep 128`
 
 `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini`
-
    
 ## Installed the nextcloud server - Part 3: Completed the installation in the Web Browser by accessing https://localhost/nextcloud/ 
 1. Accepted the Potential Security Risk Ahead from self signed security certificates that the browser warned about, and Continued
 
 2. Gave the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also entered new username and password for nextclound
 
-# The installation was successful
+### The installation was successful
