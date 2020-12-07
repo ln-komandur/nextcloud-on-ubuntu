@@ -235,7 +235,7 @@ Imagine your server's IP address changed from `192.168.254.56` to `192.168.0.27`
 
 1. Log onto the nextcloud server box (Physically / Virtually e.t.c)
 2. Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following with the new IP address
-      2.1. the trusted domains from
+      1. the trusted domains from
       ```
          ‘trusted_domains’ =>
             array (
@@ -250,7 +250,7 @@ Imagine your server's IP address changed from `192.168.254.56` to `192.168.0.27`
                0 => ‘192.168.0.27’,
          ),
       ```
-      2.2. the overwrite.cli.url from
+      2. the overwrite.cli.url from
       ```
          'overwrite.cli.url' => 'https://192.168.254.56/nextcloud',
       ```
