@@ -223,13 +223,11 @@ The options at the end of this line mean the following
 
 ---
 
-### Appendix
+## Appendix - Cannot access nextcloud server after it's IP address changed
 
 ---
 
-## Cannot access nextcloud server after it's IP address changed
-
-Your nextcloud server's IP address could change for various reasons (if it is not static or bound to the mac address), including but not limited to connecting your server on a different network, getting yourself a new router, DHCP range in your router etc. 
+Your nextcloud server's IP address could change for various reasons if it is not static or bound to the mac address, including but not limited to connecting your server on a different network, getting yourself a new router, change in DHCP range in your router etc. 
 
 Imagine your server's IP address changed from `192.168.254.56` to `192.168.0.27`. After this change, you are most likely to get an "Access through untrusted domain" page when you try to access nextcloud using the old IP address in your browser (i.e. https://192.168.254.56/nextcloud).
 
