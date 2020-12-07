@@ -235,14 +235,14 @@ Imagine your server's IP address changed from `192.168.254.56` to `192.168.0.27`
 
 1. Log onto the nextcloud server box (Physically / Virtually e.t.c)
 2. Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following with the new IP address
-      2.1 the trusted domains from
+      2.1. the trusted domains from
       ```
          ‘trusted_domains’ =>
             array (
                0 => ‘192.168.254.56’,
          ),
       ```
-         to
+      to
       
       ```   
          ‘trusted_domains’ =>
@@ -250,7 +250,14 @@ Imagine your server's IP address changed from `192.168.254.56` to `192.168.0.27`
                0 => ‘192.168.0.27’,
          ),
       ```
-      2.2 `'overwrite.cli.url' => 'https://192.168.0.27/nextcloud',`
+      2.2. the overwrite.cli.url from
+      ```
+         'overwrite.cli.url' => 'https://192.168.254.56/nextcloud',
+      ```
+      to
+      ```
+         'overwrite.cli.url' => 'https://192.168.0.27/nextcloud',
+      ```
 3. Restart apache server with `sudo systemctl restart apache2` and also reload it with `sudo systemctl reload apache2`
 4. Its very likely that your problem is still not resolved, and even the "Access through untrusted domain" page does not show up when you access `https://192.168.0.27/nextcloud`) in your browser.
 5. Try to access `https://192.168.0.27` and see if you get the apache default welcome page showing the configuration overview. If not, your problem is very likely that your `ufw` rules are not updated yet.
