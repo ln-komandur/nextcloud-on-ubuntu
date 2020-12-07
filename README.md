@@ -222,3 +222,40 @@ The options at the end of this line mean the following
 ### Successfully installed nextcloud-20.0.2 on Lubuntu 20.04.1 (64 bit)
 
 ---
+
+### Appendix
+
+---
+
+## Cannot access nextcloud server after it's IP address changed
+
+Your nextcloud server's IP address could change for various reasons (if it is not static or bound to the mac address), including but not limited to connecting your server on a different network, getting yourself a new router, DHCP range in your router etc. 
+
+Imagine your server's IP address changed from `192.168.254.56` to `192.168.0.27`. After this change, you are most likely to get an "Access through untrusted domain" page when you try to access nextcloud using the old IP address in your browser (i.e. https://192.168.254.56/nextcloud).
+
+1. Log onto the nextcloud server box (Physically / Virtually e.t.c)
+2. Edit the config.php file to include the new IP address in the trusted domains from
+```
+      ‘trusted_domains’ =>
+         array (
+            0 => ‘192.168.254.56’,
+       ),
+```
+   to
+      
+```   
+      ‘trusted_domains’ =>
+         array (
+            0 => ‘192.168.0.27’,
+       ),
+```
+
+3. Restart apache server with `sudo systemctl restart apache2`
+4. Its very likely that your problem is still not resolved, and even the "Access through untrusted domain" page does not show up when you access https://192.168.0.27/nextcloud) in your browser.
+5. Try to access https://192.168.0.27 and see if you get the apache default welcome page showing the configuration overview. If not, your problem is very likely that your `ufw` rules are not updated yet.
+6. Add new UFW rules as below and repeat the step 5 and 4 above. Remove your old `ufw` rules as appropriate 
+      1. `sudo ufw allow from 192.168.0.0/24 to any port 22 proto tcp`
+      2. `sudo ufw allow from 192.168.0.0/24 to any port 80 proto tcp`
+      
+      
+
