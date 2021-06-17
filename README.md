@@ -227,7 +227,12 @@ The options at the end of this line mean the following
 
 ---
 
-The nextcloud server's IP address could change for several reasons if it is not static or bound to the mac address, including but not limited to connecting it to a different network, a new router, change in DHCP range of the existing router etc. 
+The nextcloud server's IP address could change for several reasons including but not limited to the following
+1. if it is not static or bound to the mac address,  
+2. connecting it to a different network, a new router, 
+3. change in DHCP range of the existing router
+4. connecting the nextcloud server to the same network / router through a different network card (e.g. Wired / Wireless, new network card) 
+5. etc. 
 
 Imagine the nextcloud server's IP address changed from `192.168.254.56` to `192.168.0.27`. After this change, when nextcloud is accessed using the old IP address in the browser (i.e. https://192.168.254.56/nextcloud), an "Access through untrusted domain" page is most likely to be displayed.
 
@@ -259,12 +264,11 @@ Do the following to put the nextcloud server back on track.
          'overwrite.cli.url' => 'https://192.168.0.27/nextcloud',
          ```
 3. Restart apache server with `sudo systemctl restart apache2` and also reload it with `sudo systemctl reload apache2`
-4. Its very likely that the problem is still not resolved, and even the "Access through untrusted domain" page does not show up when accessing `https://192.168.0.27/nextcloud` through the browser.
-5. Try to access `https://192.168.0.27` and see if the apache default welcome page is shown with the configuration overview. If not, the problem is very likely that the server's `ufw` rules need to be updated.
+4. It's quite possible that the problem is still not resolved, and even the "Access through untrusted domain" page does not show up when accessing `https://192.168.0.27/nextcloud` through the browser.
+5. In that case, try to access `https://192.168.0.27` and see if the apache default welcome page is shown with the configuration overview. If not, the problem is very likely that the server's `ufw` rules need to be updated.
 6. Add new UFW rules as below and repeat the step 5 (first) and 4 (after 5) above. 
       1. `sudo ufw allow from 192.168.0.0/24 to any port 22 proto tcp`
       2. `sudo ufw allow from 192.168.0.0/24 to any port 80 proto tcp`
       2. `sudo ufw allow from 192.168.0.0/24 to any port 443 proto tcp`
 7. Remove the old `ufw` rules as appropriate after executing `sudo ufw status numbered` and deleting numbered rules with `sudo ufw delete #` (replace # with the rule number)
       
-
