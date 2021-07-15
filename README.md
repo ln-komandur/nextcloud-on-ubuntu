@@ -93,7 +93,7 @@ Continued with apache installation - assigned web root (www-data) as the owner a
 `mariadb --version`
 
 
-### Upgrade mariadb to 10.5 if you installed 10.3 as below
+### Upgrade mariadb to 10.5 if you installed 10.3 as below. Refer https://mariadb.com/docs/deploy/upgrade-community-server-cs105-ubuntu20/ as needed (caution on the checksum string)
 
 `sudo apt remove "mariadb-*"`
 
