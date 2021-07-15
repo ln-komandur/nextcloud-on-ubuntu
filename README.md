@@ -92,6 +92,42 @@ Continued with apache installation - assigned web root (www-data) as the owner a
 
 `mariadb --version`
 
+
+### Upgrade mariadb to 10.5 if you installed 10.3 as below
+
+`sudo apt remove "mariadb-*"`
+
+`sudo apt remove galera-4 galera galera-3`
+
+`apt list --installed | grep -i -E "mariadb|galera"`
+
+`sudo apt install wget`
+
+`wget https://downloads.mariadb.com/MariaDB/mariadb_repo_setup`
+
+`echo "9f73807c80d14930494021d23abc222c9dd5a1c2731510a2b4d0f835fcc0ae4e mariadb_repo_setup"     | sha256sum -c -`
+
+`chmod +x mariadb_repo_setup`
+
+`sudo ./mariadb_repo_setup    --mariadb-server-version="mariadb-10.5"`
+
+`sudo apt install mariadb-server mariadb-backup mariadb-client`
+
+`systemctl status mariadb`
+
+`sudo systemctl start mariadb`
+
+`sudo systemctl enable mariadb`
+
+`sudo mysql_secure_installation`
+
+`sudo mariadb -u root`
+
+`mariadb --version`
+
+### Continue and install PHP7.4
+
+
 `sudo apt install php7.4 libapache2-mod-php7.4 php7.4-mysql php-common php7.4-cli php7.4-common php7.4-json php7.4-opcache php7.4-readline`
 
 `sudo a2enmod php7.4`
