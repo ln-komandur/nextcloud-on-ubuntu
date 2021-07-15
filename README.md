@@ -149,7 +149,7 @@ CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
 
 `sudo systemctl restart apache2`
 
-`sudo apt install php-imagick php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl  php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
+`sudo apt install imagemagick php-imagick libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
 
 `sudo systemctl reload apache2`
 
@@ -210,6 +210,9 @@ The options at the end of this line mean the following
 
 `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini`
 
+8. Increase Upload File Size Limit
+`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 1024M/g' /etc/php/7.4/fpm/php.ini`
+
 ---   
 
 ## Installed the nextcloud server - Part 3: Completed the installation in the Web Browser by accessing https://localhost/nextcloud/ 
@@ -257,12 +260,13 @@ Do the following to put the nextcloud server back on track.
          ```
       2. the overwrite.cli.url from
          ```
-         'overwrite.cli.url' => 'https://192.168.254.56/nextcloud',
+         'overwrite.cli.url' => 'localhost','https://192.168.254.56/nextcloud',
          ```
          to
          ```
-         'overwrite.cli.url' => 'https://192.168.0.27/nextcloud',
+         'overwrite.cli.url' => 'http://localhost/nextcloud','https://192.168.0.27/nextcloud',
          ```
+         Note: The localhost part of in the 2 lines above is optional 
 3. Restart apache server with `sudo systemctl restart apache2` and also reload it with `sudo systemctl reload apache2`
 4. It's quite possible that the problem is still not resolved, and even the "Access through untrusted domain" page does not show up when accessing `https://192.168.0.27/nextcloud` through the browser.
 5. In that case, try to access `https://192.168.0.27` and see if the apache default welcome page is shown with the configuration overview. If not, the problem is very likely that the server's `ufw` rules need to be updated.
