@@ -30,8 +30,9 @@ This write up is based on the actual `history` of commands executed by following
 ---
 
 ## Software and Versions used in this installation
-1. Lubuntu 20.04.1 - Linux kernel 5.4.0-54-generic (64 bit)
-2. nextcloud-20.0.2 (64 bit)
+1. Lubuntu 20.04.1 - Linux kernel 5.4.0-54-generic (64 bit) and Lubuntu 20.04.2 - Linux kernel 5.8.0-59-generic #66~20.04.1-Ubuntu
+2. nextcloud-20.0.2 (64 bit) and nextcloud-20.0.11 (64 bit)
+3. mariadb  version 10.3 and Ver 15.1 Distrib 10.5.11-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2`
 
 ---
 
