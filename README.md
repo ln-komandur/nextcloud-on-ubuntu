@@ -175,7 +175,23 @@ CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
     SetEnv HTTP_HOME /var/www/nextcloud
     Satisfy Any
 </Directory>
+
+<VirtualHost *:80>
+   ServerName localhost
+   # Redirects any request to http://localhost/nextcloud to https
+   Redirect permanent /nextcloud https://localhost/nextcloud
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName localhost
+    <IfModule mod_headers.c>
+      Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
+    </IfModule>
+</VirtualHost>
+
 ```
+Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configure-to-redirect-to-https-site/89135/4) , [Redirect SSLD](https://cwiki.apache.org/confluence/display/HTTPD/RedirectSSL) and [Hardening and Security Guidance](https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html) for details about ```<VirtualHost>``` items in the above conf file.
+
 
 `sudo a2ensite nextcloud.conf`
 
