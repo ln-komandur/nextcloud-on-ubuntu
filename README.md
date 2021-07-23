@@ -160,23 +160,37 @@ The below is slightly different from https://www.linuxbabe.com/ubuntu/install-ne
 
 
 ```
-Alias /nextcloud "/var/www/nextcloud/"
-ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
-CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
-<Directory /var/www/html/nextcloud/>
-    Require all granted
-    Options FollowSymlinks MultiViews
-    AllowOverride All
-    
-      <IfModule mod_dav.c>
-        Dav off
-      </IfModule>     
+<VirtualHost *:80>
+   ServerName 192.168.254.56
+   # Redirects any request to http://192.168.254.56/nextcloud to https
+   Redirect permanent /nextcloud https://192.168.254.56/nextcloud
+</VirtualHost>
 
-    SetEnv HOME /var/www/nextcloud
-    SetEnv HTTP_HOME /var/www/nextcloud
-    Satisfy Any
-</Directory>
+<VirtualHost *:443>
+    ServerName 192.168.254.56
+    Alias /nextcloud "/var/www/nextcloud/"
+    ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
+    CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
+    <Directory /var/www/html/nextcloud/>
+        Require all granted
+        Options FollowSymlinks MultiViews
+        AllowOverride All
+            <IfModule mod_dav.c>
+                Dav off
+            </IfModule>     
+        SetEnv HOME /var/www/nextcloud
+        SetEnv HTTP_HOME /var/www/nextcloud
+        Satisfy Any
+    </Directory>
+    <IfModule mod_headers.c>
+      Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
+    </IfModule>
+</VirtualHost>
+
 ```
+Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configure-to-redirect-to-https-site/89135/4) , [Redirect SSLD](https://cwiki.apache.org/confluence/display/HTTPD/RedirectSSL) and [Hardening and Security Guidance](https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html) for details about ```<VirtualHost>``` items in the above conf file. 
+
+Note: Firefox may report an error as `The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies.` . Clicking the `Try Again` button would solve the problem (redirect to https)
 
 `sudo a2ensite nextcloud.conf`
 
@@ -267,7 +281,7 @@ The options at the end of this line mean the following
 
 ---
 
-The nextcloud server's IP address could change for several reasons including but not limited to the following
+The nextcloud server's IP address could change for several reasons including, but not limited to the following
 1. if it is not static or bound to the mac address,  
 2. connecting it to a different network, a new router, 
 3. change in DHCP range of the existing router
@@ -304,12 +318,12 @@ Do the following to put the nextcloud server back on track.
          'overwrite.cli.url' => 'http://localhost/nextcloud','https://192.168.0.27/nextcloud',
          ```
          Note: The localhost part of in the 2 lines above is optional 
-3. Restart apache server with `sudo systemctl restart apache2` and also reload it with `sudo systemctl reload apache2`
-4. It's quite possible that the problem is still not resolved, and even the "Access through untrusted domain" page does not show up when accessing `https://192.168.0.27/nextcloud` through the browser.
-5. In that case, try to access `https://192.168.0.27` and see if the apache default welcome page is shown with the configuration overview. If not, the problem is very likely that the server's `ufw` rules need to be updated.
-6. Add new UFW rules as below and repeat the step 5 (first) and 4 (after 5) above. 
+3. Edit the new IP address in `/etc/apache2/sites-available/nextcloud.conf` after the `ServerName` fields
+4. Restart apache server with `sudo systemctl restart apache2` and also reload it with `sudo systemctl reload apache2`
+5. It's quite possible that the problem is still not resolved, and even the "Access through untrusted domain" page does not show up when accessing `https://192.168.0.27/nextcloud` through the browser.
+6. In that case, try to access `https://192.168.0.27` and see if the apache default welcome page is shown with the configuration overview. If not, the problem is very likely that the server's `ufw` rules need to be updated.
+7. Add new UFW rules as below and repeat the step 5 (first) and 4 (after 5) above. 
       1. `sudo ufw allow from 192.168.0.0/24 to any port 22 proto tcp`
       2. `sudo ufw allow from 192.168.0.0/24 to any port 80 proto tcp`
       2. `sudo ufw allow from 192.168.0.0/24 to any port 443 proto tcp`
-7. Remove the old `ufw` rules as appropriate after executing `sudo ufw status numbered` and deleting numbered rules with `sudo ufw delete #` (replace # with the rule number)
-      
+8. Remove the old `ufw` rules as appropriate after executing `sudo ufw status numbered` and deleting numbered rules with `sudo ufw delete #` (replace # with the rule number)
