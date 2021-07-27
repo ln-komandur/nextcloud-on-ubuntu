@@ -277,7 +277,10 @@ The options at the end of this line mean the following
 
 ---
 
-## Appendix - Unable to access nextcloud server after it's IP address changed
+## Appendix
+
+
+### Unable to access nextcloud server after it's IP address changed
 
 ---
 
@@ -327,3 +330,11 @@ Do the following to put the nextcloud server back on track.
       2. `sudo ufw allow from 192.168.0.0/24 to any port 80 proto tcp`
       2. `sudo ufw allow from 192.168.0.0/24 to any port 443 proto tcp`
 8. Remove the old `ufw` rules as appropriate after executing `sudo ufw status numbered` and deleting numbered rules with `sudo ufw delete #` (replace # with the rule number)
+
+### Manually stop and start nextcloud server (Avoiding autostarts to speed up boot-up)
+
+1. Download [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) to super user's home directory
+2. Give execute permissions to both scrips with `chmod +x <script-name.sh>`
+3. Disable the 4 services `sudo systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service` so that they can be manually managed by these scripts
+4. In `/etc/fstab` make sure to have `noauto` in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0`
+5. Execute [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) with `su` credentials as needed
