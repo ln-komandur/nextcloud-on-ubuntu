@@ -18,15 +18,15 @@ echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Status of phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+echo "Status of phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service, avahi-daemon.service"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl status phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+systemctl status phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service avahi-daemon.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Stopping phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+echo "Stopping phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service, avahi-daemon.service"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl stop phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+systemctl stop phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service avahi-daemon.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
