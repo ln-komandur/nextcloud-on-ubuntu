@@ -30,15 +30,15 @@ mount /dev/sda6
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Status of phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+echo "Status of avahi-daemon.service, phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl status phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+systemctl status avahi-daemon.service phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Starting phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+echo "Starting avahi-daemon.service, phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl start phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+systemctl start avahi-daemon.service phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
 echo
 echo
 echo "Exit"
