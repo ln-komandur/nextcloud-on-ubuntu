@@ -71,7 +71,7 @@ Continued with apache installation - assigned web root (www-data) as the owner a
 
 `sudo apache2ctl -t`
 
-`sudo nano /etc/apache2/conf-available/servername.conf`   and added the line 'ServerName localhost' in this file
+`sudo nano /etc/apache2/conf-available/servername.conf`   and added the line `ServerName localhost` in this file
 
 `sudo a2enconf servername.conf`
 
@@ -162,12 +162,14 @@ The below is slightly different from https://www.linuxbabe.com/ubuntu/install-ne
 ```
 <VirtualHost *:80>
    ServerName 192.168.254.56
-   # Redirects any request to http://192.168.254.56/nextcloud to https
-   Redirect permanent /nextcloud https://192.168.254.56/nextcloud
+   ServerAlias computername.local
+   # Redirects any request to http://192.168.254.56/nextcloud or http://computername.local/nextcloud to https
+   Redirect permanent /nextcloud https://computername.local/nextcloud
 </VirtualHost>
 
 <VirtualHost *:443>
     ServerName 192.168.254.56
+    ServerAlias computername.local
     Alias /nextcloud "/var/www/nextcloud/"
     ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
     CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
@@ -191,6 +193,9 @@ The below is slightly different from https://www.linuxbabe.com/ubuntu/install-ne
 Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configure-to-redirect-to-https-site/89135/4) , [Redirect SSLD](https://cwiki.apache.org/confluence/display/HTTPD/RedirectSSL) and [Hardening and Security Guidance](https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html) for details about ```<VirtualHost>``` items in the above conf file. 
 
 Note: Firefox may report an error as `The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies.` . Clicking the `Try Again` button would solve the problem (redirect to https)
+
+Providing `ServerAlias computername.local` helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do not support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
+
 
 `sudo a2ensite nextcloud.conf`
 
@@ -299,28 +304,29 @@ Do the following to put the nextcloud server back on track.
 2. Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following with the new IP address
       1. the trusted domains from
          ```
-         ‘trusted_domains’ =>
+         'trusted_domains' =>
             array (
-               0 => ‘192.168.254.56’,
+               0 => 'computername.local','192.168.254.56',
          ),
          ```
          to
       
          ```   
-         ‘trusted_domains’ =>
+         'trusted_domains' =>
             array (
-               0 => ‘192.168.0.27’,
+               0 => 'computername.local','192.168.0.27',
          ),
          ```
       2. the overwrite.cli.url from
          ```
-         'overwrite.cli.url' => 'localhost','https://192.168.254.56/nextcloud',
+         'overwrite.cli.url' =>  'https://computername.local/nextcloud','https://192.168.254.56/nextcloud',
          ```
          to
          ```
-         'overwrite.cli.url' => 'http://localhost/nextcloud','https://192.168.0.27/nextcloud',
+         'overwrite.cli.url' => 'https://computername.local/nextcloud','https://192.168.0.27/nextcloud',
          ```
-         Note: The localhost part of in the 2 lines above is optional 
+         The above also helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the URL based on the IP address must also be given to use on those devices.
+         
 3. Edit the new IP address in `/etc/apache2/sites-available/nextcloud.conf` after the `ServerName` fields
 4. Restart apache server with `sudo systemctl restart apache2` and also reload it with `sudo systemctl reload apache2`
 5. It's quite possible that the problem is still not resolved, and even the "Access through untrusted domain" page does not show up when accessing `https://192.168.0.27/nextcloud` through the browser.
