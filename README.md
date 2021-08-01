@@ -2,10 +2,11 @@
 ---
 
 ## Useful references - Courtesy credits and Gratitude
-1. https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop
-2. https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack
-3. https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/
-4. https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html
+1. [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)
+2. [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
+3. [How to install Nextcloud 20 on Ubuntu Server 20.04](https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/)
+4. [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
+5. [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/)
 
 ---
 
@@ -14,7 +15,7 @@ Unlike the installations in the above references, the modifications in this inst
 
 1. Data is stored locally on a **separate and dedicated disk partition** on the machine where the nextcloud server is running
 2. A **self-signed security certificate** is used
-3. **No DNS lookups** are used
+3. **No DNS lookups** are used. However **mDNS look ups** from avahi.service is leveraged as clients are within the intranet
 
 This write up is based on the actual `history` of commands executed by following a blend of the above references
 
@@ -30,129 +31,66 @@ This write up is based on the actual `history` of commands executed by following
 ---
 
 ## Software and Versions used in this installation
-1. Lubuntu 20.04.1 - Linux kernel 5.4.0-54-generic (64 bit) and Lubuntu 20.04.2 - Linux kernel 5.8.0-59-generic #66~20.04.1-Ubuntu
-2. nextcloud-20.0.2 (64 bit) and nextcloud-20.0.11 (64 bit)
-3. mariadb  version 10.3 and Ver 15.1 Distrib 10.5.11-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2`
+1. Lubuntu 20.04.2 - Linux kernel 5.8.0-63-generic (64bit)
+2. nextcloud-20.0.11 (64 bit)
+3. mariadb  Ver 15.1 Distrib 10.5.11-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2
 
 ---
 
-## Installed the LAMP stack (Prerequisite)
+## Installed the LAMP stack
 
-The following `history` of commands is based on https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop
+Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)
 
-
+### Install Apache
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
 
 `sudo apt install -y apache2 apache2-utils`
 
 `systemctl status apache2`
 
-`#sudo systemctl start apache2`
-
-`sudo systemctl enable apache2`
+`sudo systemctl start apache2`
 
 `apache2 -v`
 
-`sudo ufw status`
+Assigned web root (www-data) as the owner and group for document root (/var/www/html/)
 
-`sudo iptables -L -n`
-
-`sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT` - this is also included in UFW rules as below
-
-`sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
-
-Refreshed UFW with `sudo ufw disable && sudo ufw enable && sudo ufw status`
-
-`sudo iptables -L -n`
-
-Continued with apache installation - assigned web root (www-data) as the owner and group for document root (/var/www/html/)
+`ls -l /var/www/html/`
 
 `sudo chown www-data:www-data /var/www/html/ -R`
 
-`sudo apache2ctl -t`
+### Configure Uncomplicated Firewall (UFW)
 
-`sudo nano /etc/apache2/conf-available/servername.conf`   and added the line `ServerName localhost` in this file
+`sudo ufw status`
+
+`sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
+
+`sudo ufw allow from 192.168.254.0/24 to any port 80 proto tcp`
+
+`sudo ufw allow from 192.168.254.0/24 to any port 443 proto tcp`
+
+`sudo ufw allow in from 192.168.254.1 to 224.0.0.0/24` # To allow multicast packets from the router
+
+Refreshed UFW with `sudo ufw disable && sudo ufw enable && sudo ufw status`
+
+### Configure apache to use self signed SSL certificate
+
+`sudo nano /etc/apache2/conf-available/servername.conf`   # And added the line `ServerName localhost` in this file
 
 `sudo a2enconf servername.conf`
+
+The below is slightly different from [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) as this nextcloud installation does NOT use TLS certificates from Let's encrypt, and instead uses self-signed certificates like described in [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
+
+`sudo a2enmod ssl`
+
+`sudo a2ensite default-ssl`
 
 `sudo systemctl reload apache2`
 
 `sudo apache2ctl -t`
 
-`sudo apt install mariadb-server mariadb-client`
+### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
 
-`systemctl status mariadb`
-
-`sudo systemctl start mariadb`
-
-`sudo systemctl enable mariadb`
-
-`sudo mysql_secure_installation`
-
-`sudo mariadb -u root`
-
-`mariadb --version`
-
-
-### Upgrade mariadb to 10.5 if you installed 10.3 as below. Refer https://mariadb.com/docs/deploy/upgrade-community-server-cs105-ubuntu20/ as needed (caution on the checksum string)
-
-`sudo apt remove "mariadb-*"`
-
-`sudo apt remove galera-4 galera galera-3`
-
-`apt list --installed | grep -i -E "mariadb|galera"`
-
-`sudo apt install wget`
-
-`wget https://downloads.mariadb.com/MariaDB/mariadb_repo_setup`
-
-`echo "9f73807c80d14930494021d23abc222c9dd5a1c2731510a2b4d0f835fcc0ae4e mariadb_repo_setup"     | sha256sum -c -`
-
-`chmod +x mariadb_repo_setup`
-
-`sudo ./mariadb_repo_setup    --mariadb-server-version="mariadb-10.5"`
-
-`sudo apt install mariadb-server mariadb-backup mariadb-client`
-
-`systemctl status mariadb`
-
-`sudo systemctl start mariadb`
-
-`sudo systemctl enable mariadb`
-
-`sudo mysql_secure_installation`
-
-`sudo mariadb -u root`
-
-`mariadb --version`
-
-### Continue and install PHP7.4
-
-
-`sudo apt install php7.4 libapache2-mod-php7.4 php7.4-mysql php-common php7.4-cli php7.4-common php7.4-json php7.4-opcache php7.4-readline`
-
-`sudo a2enmod php7.4`
-
-`sudo systemctl restart apache2`
-
-`php --version`
-
-`sudo nano /var/www/html/info.php and pasted the line '<?php phpinfo(); ?>' into this file to see the server's PHP information in localhost/info.php`
-
-`sudo rm /var/www/html/info.php`
-   
----
-
-## Installed nextcloud-20.0.2 server - Part 1: terminal (command line) activities
-
-The following `history` of commands is based on https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack
-After downloading and verifying the nextcloud installable file, executed the following
-
-`sudo unzip ./nextcloud-installable/zip/nextcloud-20.0.2.zip -d /var/www`
-
-`sudo chown www-data:www-data /var/www/nextcloud/ -R`
-
-`sudo mysql`
+**Note: Though apache is being configured for these, there may be some errors until the installation is fully complete.
 
 `sudo nano /etc/apache2/sites-available/nextcloud.conf`
 
@@ -192,7 +130,7 @@ The below is slightly different from https://www.linuxbabe.com/ubuntu/install-ne
 ```
 Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configure-to-redirect-to-https-site/89135/4) , [Redirect SSLD](https://cwiki.apache.org/confluence/display/HTTPD/RedirectSSL) and [Hardening and Security Guidance](https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html) for details about ```<VirtualHost>``` items in the above conf file. 
 
-Note: Firefox may report an error as `The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies.` . Clicking the `Try Again` button would solve the problem (redirect to https)
+**Note: Even when the installation is complete Firefox may report an error as `The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies.` . Clicking the `Try Again` button would solve the problem (redirect to https)
 
 Providing `ServerAlias computername.local` helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do not support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
 
@@ -205,33 +143,74 @@ Providing `ServerAlias computername.local` helps to use the server url as `https
 
 `sudo systemctl restart apache2`
 
+### Install MariaDB 10.5 
+
+Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/) for screenshots
+
+`sudo apt install software-properties-common`
+
+`sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'`
+
+`sudo add-apt-repository 'deb [arch=amd64] http://mariadb.mirror.globo.tech/repo/10.5/ubuntu focal main'`
+
+`sudo apt update`
+
+`sudo apt install mariadb-server mariadb-client`
+
+`mariadb --version` or `mysql --version`
+
+## Configure Mariadb
+
+Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for screenshots
+
+`systemctl status mariadb`
+
+`sudo systemctl start mariadb`
+
+`sudo mysql_secure_installation` ## Set up root password, remove anonymous users, disallow remote login, remove test database, reload privilege tables
+
+`sudo mariadb -u root` or `mysql -u root -p` ## These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
+
+### Create nextcloud user account (username and password) on mysql DB
+
+Refer [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) for screenshots
+
+`sudo mysql` ## Fill out YOUR custom values
+
+```
+MariaDB [(none)]> create database NameForNextCloudDatabase;
+MariaDB [(none)]> create user YOURNextCloudUser@localhost identified by 'your-password';
+MariaDB [(none)]> grant all privileges on NameForNextCloudDatabase.* to YOURNextCloudUser@localhost identified by 'your-password';
+MariaDB [(none)]> flush privileges;
+MariaDB [(none)]> exit;
+```
+
+## Installed nextcloud-20.0.2 server - Part 1: terminal (command line) activities
+
+The following `history` of commands is based on [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
+After downloading and verifying the nextcloud installable file, executed the following
+
+`sudo unzip ./Downloads/nextcloud-20.0.11.zip  -d /var/www/`
+
+`sudo chown www-data:www-data /var/www/nextcloud/ -R`
+
+## Install and Enable PHP Modules
+
+Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
+
+
 `sudo apt install imagemagick php-imagick libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
 
-`sudo systemctl reload apache2`
+`php --version`
 
-`sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT  - this is also covered in ufw rules`
+`sudo systemctl restart apache2`
 
-The ufw rules were added as below
+Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
 
-`sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
+`sudo nano /var/www/html/info.php` # Paste ```'<?php phpinfo(); ?>'``` into this file to see the server's PHP information in localhost/info.php
 
-`sudo ufw allow from 192.168.254.0/24 to any port 80 proto tcp`
+`sudo rm /var/www/html/info.php` # Remove the file after testing
 
-`sudo ufw allow from 192.168.254.0/24 to any port 443 proto tcp`
-
-`sudo ufw disable && sudo ufw enable`
-
-`sudo ufw status`
-
-
-
-The below is slightly different from https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack as this nextcloud installation did NOT use TLS certificates from Let's encrypt, and instead used self-signed certificates like described in https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html 
-
-`sudo a2enmod ssl`
-
-`sudo a2ensite default-ssl`
-  
-`sudo systemctl reload apache2`
 
 ---
 
@@ -262,11 +241,22 @@ The options at the end of this line mean the following
 `sudo mount -a`
 
 7. Increased PHP Memory Limit to 512M after checking its current size to be 128M
+
 `cat /etc/php/7.4/apache2/php.ini | grep 128`
+
+```
+; Maximum amount of memory a script may consume (128MB)
+memory_limit = 128M
+;opcache.memory_consumption=128
+
+```
 
 `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini`
 
-8. Increase Upload File Size Limit
+8. Increase Upload File Size Limit from 2M to 1024M
+
+`cat cat /etc/php/7.4/fpm/php.ini | grep upload_max_filesize`
+
 `sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 1024M/g' /etc/php/7.4/fpm/php.ini`
 
 ---   
@@ -274,7 +264,23 @@ The options at the end of this line mean the following
 ## Installed the nextcloud server - Part 3: Completed the installation in the Web Browser by accessing https://localhost/nextcloud/ 
 1. Accepted the Potential Security Risk Ahead from self signed security certificates that the browser warned about, and Continued
 
-2. Gave the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also entered new username and password for nextclound
+2. Gave the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also entered new username and password for nextcloud. **Note: There may be some errors because of trusted domains as apache is already configures to redirect IP addresses to alias and http to https. Perform the below to fix them.
+3. Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following to have both the IP address `192.168.254.56` and alias `computername.local`
+      1. trusted domains
+         ```
+         'trusted_domains' =>
+            array (
+               0 => 'computername.local','192.168.254.56',
+         ),
+         ```
+      2. the overwrite.cli.url 
+         ```
+         'overwrite.cli.url' =>  'https://computername.local/nextcloud','https://192.168.254.56/nextcloud',
+         ```
+         The above helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the URL based on the IP address must also be given to use on those devices.
+
+
+
 
 ---
 
@@ -324,9 +330,7 @@ Do the following to put the nextcloud server back on track.
          to
          ```
          'overwrite.cli.url' => 'https://computername.local/nextcloud','https://192.168.0.27/nextcloud',
-         ```
-         The above also helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the URL based on the IP address must also be given to use on those devices.
-         
+         ```         
 3. Edit the new IP address in `/etc/apache2/sites-available/nextcloud.conf` after the `ServerName` fields
 4. Restart apache server with `sudo systemctl restart apache2` and also reload it with `sudo systemctl reload apache2`
 5. It's quite possible that the problem is still not resolved, and even the "Access through untrusted domain" page does not show up when accessing `https://192.168.0.27/nextcloud` through the browser.
@@ -334,7 +338,8 @@ Do the following to put the nextcloud server back on track.
 7. Add new UFW rules as below and repeat the step 5 (first) and 4 (after 5) above. 
       1. `sudo ufw allow from 192.168.0.0/24 to any port 22 proto tcp`
       2. `sudo ufw allow from 192.168.0.0/24 to any port 80 proto tcp`
-      2. `sudo ufw allow from 192.168.0.0/24 to any port 443 proto tcp`
+      3. `sudo ufw allow from 192.168.0.0/24 to any port 443 proto tcp`
+      4. `sudo ufw allow in from 192.168.0.1 to 224.0.0.0/24`
 8. Remove the old `ufw` rules as appropriate after executing `sudo ufw status numbered` and deleting numbered rules with `sudo ufw delete #` (replace # with the rule number)
 
 ### Manually stop and start nextcloud server (Avoiding autostarts to speed up boot-up)
@@ -342,6 +347,5 @@ Do the following to put the nextcloud server back on track.
 1. Download [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) to super user's home directory
 2. Give execute permissions to both scrips with `chmod +x <script-name.sh>`
 3. Disable the 4 services `sudo systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service` so that they can be manually stopped and started by these scripts
-4. Also disable `sudo systemctl disable avahi-daemon.service avahi-daemon.socket` if possible (which is hard). If successful, then include those 2 in [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh)
-5. In `/etc/fstab` make sure to have `noauto` in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0`
-6. Execute [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) with `su` credentials as needed
+4. In `/etc/fstab` make sure to have `noauto` in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0`. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
+5. Execute [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) with `su` credentials as needed
