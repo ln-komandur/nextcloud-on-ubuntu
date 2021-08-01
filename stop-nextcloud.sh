@@ -15,12 +15,12 @@ fi
 echo "This script stops nextcloud services namely PHP Session Clean timer, PHP7.4fpm, MariaDB, Apache2. After"
 echo "stopping these services, it reports the mount status of the NextCloud Data partition and unmounts it too"
 echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
-echo
-echo
-echo "---------------------------------------------------------------------------------------------------"
-echo "Status of phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
-echo "---------------------------------------------------------------------------------------------------"
-systemctl status phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+#echo
+#echo
+#echo "---------------------------------------------------------------------------------------------------"
+#echo "Status of phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+#echo "---------------------------------------------------------------------------------------------------"
+#systemctl status phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
@@ -30,15 +30,33 @@ systemctl stop phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
+echo "Firewall status"
+echo "---------------------------------------------------------------------------------------------------"
+ufw status
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
+echo "Stop Firewall"
+echo "---------------------------------------------------------------------------------------------------"
+ufw disable
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
 echo "Mount status of /dev/sda6"
 echo "---------------------------------------------------------------------------------------------------"
 findmnt /dev/sda6
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Unmounting /dev/sda6"
+echo "Unmount /dev/sda6"
 echo "---------------------------------------------------------------------------------------------------"
 umount /dev/sda6
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
+echo "Run fsck /dev/sda6"
+echo "---------------------------------------------------------------------------------------------------"
+fsck /dev/sda6
 echo
 echo
 echo "Exit"
