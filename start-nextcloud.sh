@@ -42,12 +42,6 @@ mount /dev/sda6
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Start ufw.service"
-echo "---------------------------------------------------------------------------------------------------"
-systemctl start ufw.service
-echo
-echo
-echo "---------------------------------------------------------------------------------------------------"
 echo "Enable Firewall"
 echo "---------------------------------------------------------------------------------------------------"
 ufw enable
@@ -60,15 +54,15 @@ ufw status
 #echo
 #echo
 #echo "---------------------------------------------------------------------------------------------------"
-#echo "Status of phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+#echo "Status of ufw.service, phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
 #echo "---------------------------------------------------------------------------------------------------"
-#systemctl status phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+#systemctl status ufw.service, phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Starting phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+echo "Starting ufw.service apache2.service mariadb.service php7.4-fpm.service phpsessionclean.timer"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl start phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+systemctl start ufw.service apache2.service mariadb.service php7.4-fpm.service phpsessionclean.timer   
 echo
 echo
 echo "Exit"
