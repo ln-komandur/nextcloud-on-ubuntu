@@ -24,15 +24,39 @@ findmnt /dev/sda6
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
+echo "Unmount /dev/sda6 if it is already mounted for any other reasons whatsoever"
+echo "---------------------------------------------------------------------------------------------------"
+umount /dev/sda6
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
+echo "Run fsck /dev/sda6 prior to mounting again"
+echo "---------------------------------------------------------------------------------------------------"
+fsck /dev/sda6
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
 echo "Mounting /dev/sda6"
 echo "---------------------------------------------------------------------------------------------------"
 mount /dev/sda6
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Status of phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+echo "Start Firewall"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl status phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+ufw enable
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
+echo "Firewall status"
+echo "---------------------------------------------------------------------------------------------------"
+ufw status
+#echo
+#echo
+#echo "---------------------------------------------------------------------------------------------------"
+#echo "Status of phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+#echo "---------------------------------------------------------------------------------------------------"
+#systemctl status phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
