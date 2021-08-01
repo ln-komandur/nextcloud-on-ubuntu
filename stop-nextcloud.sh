@@ -24,15 +24,15 @@ echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Stopping phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+echo "Stopping phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service, ufw.service"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl stop phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+systemctl stop phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service ufw.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Stop ufw.service"
+echo "Disable phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service, ufw.service"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl stop ufw.service
+systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service ufw.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
@@ -48,19 +48,19 @@ ufw status
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Mount status of /dev/sda6"
-echo "---------------------------------------------------------------------------------------------------"
-findmnt /dev/sda6
-echo
-echo
-echo "---------------------------------------------------------------------------------------------------"
 echo "Unmount /dev/sda6"
 echo "---------------------------------------------------------------------------------------------------"
 umount /dev/sda6
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Run fsck /dev/sda6"
+echo "Mount status of /dev/sda6"
+echo "---------------------------------------------------------------------------------------------------"
+findmnt /dev/sda6
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
+echo "Run fsck /dev/sda6 after unmounting"
 echo "---------------------------------------------------------------------------------------------------"
 fsck /dev/sda6
 echo
