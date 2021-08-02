@@ -1,4 +1,4 @@
-# ***Manually*** installed nextcloud server on Lubuntu 20.04 (64bit) for limited use within the intranet / home network
+# ***Manually*** install nextcloud server on Lubuntu 20.04 (64bit) for limited use within the intranet / home network
 ---
 
 ## Useful references - Courtesy credits and Gratitude
@@ -15,7 +15,7 @@ Unlike the installations in the above references, the modifications in this inst
 
 1. Data is stored locally on a **separate and dedicated disk partition** on the machine where the nextcloud server is running
 2. A **self-signed security certificate** is used
-3. **No DNS lookups** are used. However **mDNS look ups** from avahi.service is leveraged as clients are within the intranet
+3. **No DNS lookups** are used. However **mDNS lookups** from avahi.service are leveraged as clients are within the intranet
 
 This write up is based on the actual `history` of commands executed by following a blend of the above references
 
@@ -32,12 +32,12 @@ This write up is based on the actual `history` of commands executed by following
 
 ## Software and Versions used in this installation
 1. Lubuntu 20.04.2 - Linux kernel 5.8.0-63-generic (64bit)
-2. nextcloud-20.0.11 (64 bit)
+2. nextcloud-20.0.11 (amd64)
 3. mariadb  Ver 15.1 Distrib 10.5.11-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2
 
 ---
 
-## Installed the LAMP stack
+## Install the LAMP stack
 
 Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)
 
@@ -52,25 +52,11 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 
 `apache2 -v`
 
-Assigned web root (www-data) as the owner and group for document root (/var/www/html/)
+Assign web root (www-data) as the owner and group for document root (/var/www/html/)
 
 `ls -l /var/www/html/`
 
 `sudo chown www-data:www-data /var/www/html/ -R`
-
-### Configure Uncomplicated Firewall (UFW)
-
-`sudo ufw status`
-
-`sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
-
-`sudo ufw allow from 192.168.254.0/24 to any port 80 proto tcp`
-
-`sudo ufw allow from 192.168.254.0/24 to any port 443 proto tcp`
-
-`sudo ufw allow in from 192.168.254.1 to 224.0.0.0/24` # To allow multicast packets from the router
-
-Refreshed UFW with `sudo ufw disable && sudo ufw enable && sudo ufw status`
 
 ### Configure apache to use self signed SSL certificate
 
@@ -90,11 +76,11 @@ The below is slightly different from [Install NextCloud on Ubuntu 20.04 with Apa
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
 
-**Note: Though apache is being configured for these, there may be some errors until the installation is fully complete.
+**Note:** Though apache is being configured for these, there may be some errors until the installation is fully complete.
 
 `sudo nano /etc/apache2/sites-available/nextcloud.conf`
 
-The below is slightly different from https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack as this nextcloud installation DID NOT choose to use a DNS look up / Virtual host. These lines below necessary changes based on both https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/ and https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html
+The below is slightly different from [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) as this nextcloud installation DOES NOT choose to use a DNS look up. These lines below are based on both [How to install Nextcloud 20 on Ubuntu Server 20.04](https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/) and [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
 
 
 ```
@@ -130,7 +116,7 @@ The below is slightly different from https://www.linuxbabe.com/ubuntu/install-ne
 ```
 Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configure-to-redirect-to-https-site/89135/4) , [Redirect SSLD](https://cwiki.apache.org/confluence/display/HTTPD/RedirectSSL) and [Hardening and Security Guidance](https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html) for details about ```<VirtualHost>``` items in the above conf file. 
 
-**Note: Even when the installation is complete Firefox may report an error as `The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies.` . Clicking the `Try Again` button would solve the problem (redirect to https)
+**Note:** Even when the installation is complete Firefox may report an error as `The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies.` . Clicking the `Try Again` button would solve the problem (redirect to https)
 
 Providing `ServerAlias computername.local` helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do not support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
 
@@ -143,7 +129,23 @@ Providing `ServerAlias computername.local` helps to use the server url as `https
 
 `sudo systemctl restart apache2`
 
-### Install MariaDB 10.5 
+### Configure Uncomplicated Firewall (UFW)
+
+`sudo ufw status`
+
+`sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
+
+`sudo ufw allow from 192.168.254.0/24 to any port 80 proto tcp`
+
+`sudo ufw allow from 192.168.254.0/24 to any port 443 proto tcp`
+
+`sudo ufw allow in from 192.168.254.1 to 224.0.0.0/24` # To allow multicast packets from the router
+
+Refresh UFW with `sudo ufw disable && sudo ufw enable && sudo ufw status`
+
+
+
+## Install MariaDB 10.5 
 
 Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/) for screenshots
 
@@ -159,7 +161,7 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 `mariadb --version` or `mysql --version`
 
-## Configure Mariadb
+### Configure Mariadb
 
 Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for screenshots
 
@@ -185,14 +187,31 @@ MariaDB [(none)]> flush privileges;
 MariaDB [(none)]> exit;
 ```
 
-## Installed nextcloud-20.0.2 server - Part 1: terminal (command line) activities
+## Prepare the dedicated partition to save nextcloud server's data (user) files 
+1. Create a separte disk partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
+2. Create a directory to mount that partition agnostic of users logged on the PC on which the nextcloud server is running
+`sudo mkdir /media/all-users-nextcloud-data`
+3. Gave the ownership of that directory (to-be partition mount point for nextcloud server's data (user) files) to the web-root
+`sudo chown www-data:www-data /media/all-users-nextcloud-data/ -R`
+4. Got the UUID of the partition at its current mount point using one of the below
+`ls -l /media/`
+`sudo blkid | grep UUID=`
+5. Edit `/etc/fstab` to include information to mount the partition at the `/media/all-users-nextcloud-data` directory
 
-The following `history` of commands is based on [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
-After downloading and verifying the nextcloud installable file, executed the following
+`sudo nano /etc/fstab`
+and add the line 
+`UUID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` at the end of the fstab file
 
-`sudo unzip ./Downloads/nextcloud-20.0.11.zip  -d /var/www/`
+The options at the end of this line mean the following 
+* `noauto` - do not mount this partition at boot time
+* `nosuid` - ignore / disregard the setguid (sticky bit) if set
+* `nodev` - cannot contain special devices as a security precaution
+* `noexec` - binaries cannot be executed in this partition
+* `nouser` - only root can mount this partition. In the current context, this setting is intentional to act like a server switch to make the data folder available to nextcloud clients only if root mounts it
+* `nofail` - ignore device errors if any
 
-`sudo chown www-data:www-data /var/www/nextcloud/ -R`
+6. Check if the partition can be mounted at the new mount point by
+`sudo mount -a`
 
 ## Install and Enable PHP Modules
 
@@ -211,36 +230,7 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 
 `sudo rm /var/www/html/info.php` # Remove the file after testing
 
-
----
-
-## Installed the nextcloud server - Part 2: Prepared the dedicated partition to save nextclound server's data (user) files 
-1. Created a separte disk partition of desired size and formated it as `ext4` using GParted / KDE Partition Manager 
-2. Created a directory to mount that partition agnostic of users logged on the PC on which the nextcloud server is running
-`sudo mkdir /media/all-users-nextcloud-data`
-3. Gave the ownership of that directory (to-be partition mount point for nextclound server's data (user) files) to the web-root
-`sudo chown www-data:www-data /media/all-users-nextcloud-data/ -R`
-4. Got the UUID of the partition at its current mount point using one of the below
-`ls -l /media/`
-`sudo blkid | grep UUID=`
-5. Edited `/etc/fstab` to include information to mount the partition at the `/media/all-users-nextcloud-data` directory
-`sudo nano /etc/fstab`
-
-and added the line 
-`UUID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` at the end of the fstab file
-
-The options at the end of this line mean the following 
-* `noauto` - do not mount this partition at boot time
-* `nosuid` - ignore / disregard the setguid (sticky bit) if set
-* `nodev` - cannot contain special devices as a security precaution
-* `noexec` - binaries cannot be executed in this partition
-* `nouser` - only root can mount this partition. In the current context, this setting is intentional to act like a server switch to make the data folder available to nextcloud clients only if root mounts it
-* `nofail` - ignore device errors if any
-
-6. Mounted the partition at the new mount point by
-`sudo mount -a`
-
-7. Increased PHP Memory Limit to 512M after checking its current size to be 128M
+Increase PHP Memory Limit to 512M after checking its current size to be 128M or so
 
 `cat /etc/php/7.4/apache2/php.ini | grep 128`
 
@@ -253,18 +243,29 @@ memory_limit = 128M
 
 `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini`
 
-8. Increase Upload File Size Limit from 2M to 1024M
+Increase Upload File Size Limit from 2M to 1024M
 
-`cat cat /etc/php/7.4/fpm/php.ini | grep upload_max_filesize`
+`cat /etc/php/7.4/fpm/php.ini | grep upload_max_filesize`
 
 `sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 1024M/g' /etc/php/7.4/fpm/php.ini`
 
 ---   
 
-## Installed the nextcloud server - Part 3: Completed the installation in the Web Browser by accessing https://localhost/nextcloud/ 
-1. Accepted the Potential Security Risk Ahead from self signed security certificates that the browser warned about, and Continued
+## Install nextcloud-20.0.11 server - Part 1: terminal (command line) activities
 
-2. Gave the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also entered new username and password for nextcloud. **Note: There may be some errors because of trusted domains as apache is already configures to redirect IP addresses to alias and http to https. Perform the below to fix them.
+The following `history` of commands is based on [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
+After downloading and verifying the nextcloud installable file, execute the following
+
+`sudo unzip ./Downloads/nextcloud-20.0.11.zip  -d /var/www/`
+
+`sudo chown www-data:www-data /var/www/nextcloud/ -R`
+
+`sudo systemctl reload apache2` Reload (or restart if needed) apache before completing the installation through the web browser.
+
+## Install the nextcloud server - Part 2: Complete the installation in the Web Browser by accessing https://localhost/nextcloud/ 
+1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
+
+2. Give the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also enter the new username and password for nextcloud. **Note:** There may be some errors because of trusted domains as apache is already configures to redirect IP addresses to alias and http to https. Perform the below to fix them.
 3. Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following to have both the IP address `192.168.254.56` and alias `computername.local`
       1. trusted domains
          ```
@@ -285,7 +286,7 @@ memory_limit = 128M
 
 ---
 
-### Successfully installed nextcloud-20.0.2 on Lubuntu 20.04.1 (64 bit)
+### Successfully installed nextcloud-20.0.11 on Lubuntu 20.04.2 (64 bit)
 
 ---
 
