@@ -230,24 +230,59 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 
 `sudo rm /var/www/html/info.php` # Remove the file after testing
 
-Increase PHP Memory Limit to 512M after checking its current size to be 128M or so
+### Configuring PHP
+Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
-`cat /etc/php/7.4/apache2/php.ini | grep 128`
+#### Increase PHP Memory Limit to 512M after checking its current size **in 2 php.ini files**
 
-```
-; Maximum amount of memory a script may consume (128MB)
-memory_limit = 128M
-;opcache.memory_consumption=128
+In /etc/php/7.4/fpm/php.ini file 
+`cat /etc/php/7.4/fpm/php.ini | grep memory_limit` # Get the current value to use in sed command
 
-```
+`sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/fpm/php.ini`
+
+Repeat this with /etc/php/7.4/apache2/php.ini
+
+`cat /etc/php/7.4/apache2/php.ini | grep memory_limit` # Get the current value to use in sed command
 
 `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini`
 
-Increase Upload File Size Limit from 2M to 1024M
+#### Increase Upload File Size Limit to 2G **in 2 php.ini files in 2 places each**
 
-`cat /etc/php/7.4/fpm/php.ini | grep upload_max_filesize`
+In /etc/php/7.4/fpm/php.ini file 
 
-`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 1024M/g' /etc/php/7.4/fpm/php.ini`
+`cat /etc/php/7.4/fpm/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
+
+`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/7.4/fpm/php.ini`
+
+`cat /etc/php/7.4/fpm/php.ini | grep post_max_size` # Get the current value to use in sed command
+
+`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/7.4/fpm/php.ini`
+
+Repeat this with /etc/php/7.4/apache2/php.ini
+
+`cat /etc/php/7.4/apache2/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
+
+`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/7.4/apache2/php.ini`
+
+`cat /etc/php/7.4/apache2/php.ini | grep post_max_size` # Get the current value to use in sed command
+
+`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/7.4/apache2/php.ini`
+
+#### Disable output_buffering **in 2 php.ini files**
+
+In /etc/php/7.4/fpm/php.ini file 
+
+`cat /etc/php/7.4/fpm/php.ini | grep output_buffering` # Get the current value to use in sed command
+
+`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/7.4/fpm/php.ini`
+
+Repeat this with /etc/php/7.4/apache2/php.ini
+
+`cat /etc/php/7.4/apache2/php.ini | grep output_buffering` # Get the current value to use in sed command
+
+`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/7.4/apache2/php.ini`
+
+`sudo systemctl reload apache2` # Reload (or restart if needed) 
 
 ---   
 
@@ -260,7 +295,7 @@ After downloading and verifying the nextcloud installable file, execute the foll
 
 `sudo chown www-data:www-data /var/www/nextcloud/ -R`
 
-`sudo systemctl reload apache2` Reload (or restart if needed) apache before completing the installation through the web browser.
+`sudo systemctl reload apache2` # Reload (or restart if needed) apache before completing the installation through the web browser.
 
 ## Install the nextcloud server - Part 2: Complete the installation in the Web Browser by accessing https://localhost/nextcloud/ 
 1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
