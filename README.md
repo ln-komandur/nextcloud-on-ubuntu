@@ -1,4 +1,4 @@
-# ***Manually*** install nextcloud server on Lubuntu 20.04 (64bit) for limited use within the intranet / home network
+# ***Manually*** install nextcloud server on Lubuntu 20.04 (64bit) or Raspbian (buster) for limited use within the intranet / home network
 ---
 
 ## Useful references - Courtesy credits and Gratitude
@@ -31,9 +31,19 @@ This write up is based on the actual `history` of commands executed by following
 ---
 
 ## Software and Versions used in this installation
-1. Lubuntu 20.04.2 - Linux kernel 5.8.0-63-generic (64bit)
-2. nextcloud-20.0.11 (amd64)
+
+### On Lubuntu 20.04.2 
+1. Linux kernel 5.8.0-63-generic (64bit)
+2. nextcloud-20.0.11 (64 bit)
 3. mariadb  Ver 15.1 Distrib 10.5.11-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2
+4. OpenJDK 16 JRE
+
+### On Raspbian GNU/Linux 10 (buster)
+1. Linux raspberrypi 5.10.52-v7+ #1440 SMP Tue Jul 27 09:54:13 BST 2021 armv7l GNU/Linux
+2. nextcloud-20.0.11 (64 bit)
+3. mariadb  Ver 15.1 Distrib 10.3.29-MariaDB, for debian-linux-gnueabihf (armv7l) using readline 5.2
+4. OpenJDK 11 JRE 
+
 
 ---
 
@@ -42,6 +52,8 @@ This write up is based on the actual `history` of commands executed by following
 Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)
 
 ### Install Apache
+This section is identical for **both Lubuntu and Raspbian**.
+
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
 
 `sudo apt install -y apache2 apache2-utils`
@@ -59,6 +71,7 @@ Assign web root (www-data) as the owner and group for document root (/var/www/ht
 `sudo chown www-data:www-data /var/www/html/ -R`
 
 ### Configure apache to use self signed SSL certificate
+This section is identical for **both Lubuntu and Raspbian**.
 
 `sudo nano /etc/apache2/conf-available/servername.conf`   # And added the line `ServerName localhost` in this file
 
@@ -75,6 +88,7 @@ The below is slightly different from [Install NextCloud on Ubuntu 20.04 with Apa
 `sudo apache2ctl -t`
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
+This section is identical for **both Lubuntu and Raspbian**.
 
 **Note:** Though apache is being configured for these, there may be some errors until the installation is fully complete.
 
@@ -130,6 +144,7 @@ Providing `ServerAlias computername.local` helps to use the server url as `https
 `sudo systemctl restart apache2`
 
 ### Configure Uncomplicated Firewall (UFW)
+This section is identical for **both Lubuntu and Raspbian**.
 
 `sudo ufw status`
 
@@ -146,22 +161,26 @@ Refresh UFW with `sudo ufw disable && sudo ufw enable && sudo ufw status`
 
 
 ## Install MariaDB 10.5 
+All commands are needed for **Lubuntu**. Refer comments for those that do not apply for **Raspbian**.
+
+These commands will NOT install MariaDB 10.5.11 on Raspbian. They will most likely install MariaDB 10.3.29 (from defaults)
 
 Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/) for screenshots
 
-`sudo apt install software-properties-common`
+`sudo apt install software-properties-common` # Applies for **both Lubuntu and Raspbian**.
 
-`sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'`
+`sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'` # Applies **ONLY for Lubuntu**.
 
-`sudo add-apt-repository 'deb [arch=amd64] http://mariadb.mirror.globo.tech/repo/10.5/ubuntu focal main'`
+`sudo add-apt-repository 'deb [arch=amd64] http://mariadb.mirror.globo.tech/repo/10.5/ubuntu focal main'` # Applies **ONLY for Lubuntu**.
 
-`sudo apt update`
+`sudo apt update` # Applies for **both Lubuntu and Raspbian**.
 
-`sudo apt install mariadb-server mariadb-client`
+`sudo apt install mariadb-server mariadb-client` # Applies for **both Lubuntu and Raspbian**.
 
-`mariadb --version` or `mysql --version`
+`mariadb --version` or `mysql --version` # Applies for **both Lubuntu and Raspbian**. Raspbian is most likely to show "mariadb  Ver 15.1 Distrib 10.3.29-MariaDB"
 
 ### Configure Mariadb
+This section is identical for **both Lubuntu and Raspbian**.
 
 Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for screenshots
 
@@ -174,6 +193,7 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 `sudo mariadb -u root` or `mysql -u root -p` ## These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
 
 ### Create nextcloud user account (username and password) on mysql DB
+This section is identical for **both Lubuntu and Raspbian**.
 
 Refer [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) for screenshots
 
@@ -188,6 +208,8 @@ MariaDB [(none)]> exit;
 ```
 
 ## Prepare the dedicated partition to save nextcloud server's data (user) files 
+This section is identical for **both Lubuntu and Raspbian**.
+
 1. Create a separte disk partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
 2. Create a directory to mount that partition agnostic of users logged on the PC on which the nextcloud server is running
 `sudo mkdir /media/all-users-nextcloud-data`
@@ -215,8 +237,17 @@ The options at the end of this line mean the following
 
 ## Install and Enable PHP Modules
 
+***ONLY for Raspbian:*** Refer "Second method" in [PHP 7.4 on raspbian](https://raspberrypi.stackexchange.com/questions/108149/php-7-4-on-raspbian) and execute the following 5 commands before proceeding with the rest of the commands common to Lubuntu and Raspbian
+
+  1. `sudo apt -y install lsb-release apt-transport-https ca-certificates`
+  2. `sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg`
+  3. `echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/php.list`
+  4. `sudo apt update`
+  5. `sudo apt -y install php7.4`  
+
 Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
+The following are identical for **both Lubuntu and Raspbian**.
 
 `sudo apt install imagemagick php-imagick libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
 
@@ -231,11 +262,14 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 `sudo rm /var/www/html/info.php` # Remove the file after testing
 
 ### Configuring PHP
+This section is identical for **both Lubuntu and Raspbian**.
+
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
 #### Increase PHP Memory Limit to 512M after checking its current size **in 2 php.ini files**
 
 In /etc/php/7.4/fpm/php.ini file 
+
 `cat /etc/php/7.4/fpm/php.ini | grep memory_limit` # Get the current value to use in sed command
 
 `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/fpm/php.ini`
@@ -287,21 +321,32 @@ Repeat this with /etc/php/7.4/apache2/php.ini
 ---   
 
 ## Install nextcloud-20.0.11 server - Part 1: terminal (command line) activities
+This section is identical for **both Lubuntu and Raspbian**.
 
-The following `history` of commands is based on [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
-After downloading and verifying the nextcloud installable file, execute the following
+The following is based on [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-`sudo unzip ./Downloads/nextcloud-20.0.11.zip  -d /var/www/`
+[Download nextcloud 20.0.11](https://nextcloud.com/changelog/#latest20). 
 
-`sudo chown www-data:www-data /var/www/nextcloud/ -R`
+Verify the installable file with `sha256sum ./Downloads/nextcloud-20.0.11.zip` against the [checksum for the file](https://download.nextcloud.com/server/releases/nextcloud-20.0.11.zip.sha256) 
+
+`sudo unzip ./Downloads/nextcloud-20.0.11.zip  -d /var/www/` # Extract the installable
+
+`sudo chown www-data:www-data /var/www/nextcloud/ -R` # Change owner and group from root to www-data
 
 `sudo systemctl reload apache2` # Reload (or restart if needed) apache before completing the installation through the web browser.
 
-## Install the nextcloud server - Part 2: Complete the installation in the Web Browser by accessing https://localhost/nextcloud/ 
+## Install the nextcloud server - Part 2: Complete the installation in the Web Browser by accessing https://192.168.254.56/nextcloud/ 
+This section is identical for **both Lubuntu and Raspbian**.
+
 1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
 
-2. Give the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also enter the new username and password for nextcloud. **Note:** There may be some errors because of trusted domains as apache is already configures to redirect IP addresses to alias and http to https. Perform the below to fix them.
-3. Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following to have both the IP address `192.168.254.56` and alias `computername.local`
+2. Create an admin user account (and the first user account) for your nextcloud server
+
+3. Give the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also enter the new username and password for the nextcloud database. **Note:** The browser WILL show errors because of trusted domains as 
+      1. apache is already configured to redirect `ServerName 192.168.254.56` to `ServerAlias computername.local` http to https
+      2. config.php is created only in this step and does not have `192.168.254.56` and `computername.local` listed as trusted_domains yet
+
+3. **Fix:** Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following to have both the IP address `192.168.254.56` and alias `computername.local`
       1. trusted domains
          ```
          'trusted_domains' =>
@@ -316,12 +361,12 @@ After downloading and verifying the nextcloud installable file, execute the foll
          The above helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the URL based on the IP address must also be given to use on those devices.
 4. Restart apache `sudo systemctl restart apache2`         
 
-
-
-
 ---
 
-### Successfully installed nextcloud-20.0.11 on Lubuntu 20.04.2 (64 bit)
+### Your nextcloud-20.0.11 installation on Lubuntu 20.04.2 (64 bit) or Raspbian GNU/Linux 10 (buster) is not complete
+### Post installation Upgrade 
+Log in to your nextcloud server with admin user previlleges and upgrade to nextcloud 21 from "Settings -> Administration -> Overview" if prompted
+
 
 ---
 
