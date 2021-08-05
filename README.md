@@ -33,16 +33,18 @@ This write up is based on the actual `history` of commands executed by following
 ## Software and Versions used in this installation
 
 ### On Lubuntu 20.04.2 
-1. Linux kernel 5.8.0-63-generic (64bit)
-2. nextcloud-20.0.11 (64 bit)
+1. Linux kernel 5.8.0-63-generic (64 bit)
+2. nextcloud-20.0.11
 3. mariadb  Ver 15.1 Distrib 10.5.11-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2
 4. OpenJDK 16 JRE
 
 ### On Raspbian GNU/Linux 10 (buster)
 1. Linux raspberrypi 5.10.52-v7+ #1440 SMP Tue Jul 27 09:54:13 BST 2021 armv7l GNU/Linux
-2. nextcloud-20.0.11 (64 bit)
+2. nextcloud-20.0.11
 3. mariadb  Ver 15.1 Distrib 10.3.29-MariaDB, for debian-linux-gnueabihf (armv7l) using readline 5.2
-4. OpenJDK 11 JRE 
+4. OpenJDK version "11.0.12" 2021-07-20, OpenJDK RE (build 11.0.12+7-post-Raspbian-2deb10u1)
+5. apache2 Server version: Apache/2.4.38 (Raspbian)
+
 
 
 ---
