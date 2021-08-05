@@ -39,7 +39,7 @@ This write up is based on the actual `history` of commands executed by following
 4. OpenJDK 16 JRE
 
 ### On Raspbian GNU/Linux 10 (buster)
-1. Linux raspberrypi 5.10.52-v7+ #1440 SMP Tue Jul 27 09:54:13 BST 2021 armv7l GNU/Linux
+1. Linux raspberrypi 5.10.52-v7+ armv7l GNU/Linux
 2. nextcloud-20.0.11
 3. mariadb  Ver 15.1 Distrib 10.3.29-MariaDB, for debian-linux-gnueabihf (armv7l) using readline 5.2
 4. OpenJDK version "11.0.12" 2021-07-20, OpenJDK RE (build 11.0.12+7-post-Raspbian-2deb10u1)
