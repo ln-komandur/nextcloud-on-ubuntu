@@ -36,13 +36,14 @@ This write up is based on the actual `history` of commands executed by following
 1. Linux kernel 5.8.0-63-generic (64 bit)
 2. nextcloud-20.0.11
 3. mariadb  Ver 15.1 Distrib 10.5.11-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2
-4. OpenJDK 16 JRE
+4. OpenJDK version "16.0.1" 2021-04-20, JRE build 16.0.1+9-Ubuntu-120.04
+5. apache2 Server version: Apache/2.4.41 (Ubuntu)
 
 ### On Raspbian GNU/Linux 10 (buster)
 1. Linux raspberrypi 5.10.52-v7+ armv7l GNU/Linux
 2. nextcloud-20.0.11
 3. mariadb  Ver 15.1 Distrib 10.3.29-MariaDB, for debian-linux-gnueabihf (armv7l) using readline 5.2
-4. OpenJDK version "11.0.12" 2021-07-20, OpenJDK RE (build 11.0.12+7-post-Raspbian-2deb10u1)
+4. OpenJDK version "11.0.12" 2021-07-20, JRE build 11.0.12+7-post-Raspbian-2deb10u1
 5. apache2 Server version: Apache/2.4.38 (Raspbian)
 
 
