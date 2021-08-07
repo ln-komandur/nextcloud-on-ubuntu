@@ -361,6 +361,10 @@ This section is identical for **both Lubuntu and Raspbian**.
          ```
          'overwrite.cli.url' =>  'https://computername.local/nextcloud','https://192.168.254.56/nextcloud',
          ```
+      3. Include the line just below the above
+         ```
+         'overwriteprotocol' => 'https',
+         ``` 
          The above helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the URL based on the IP address must also be given to use on those devices.
 4. Restart apache `sudo systemctl restart apache2`         
 
