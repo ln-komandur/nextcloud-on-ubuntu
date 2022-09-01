@@ -13,7 +13,7 @@ if (($EUID != 0)); then
   exit
 fi
 echo "This script reports the mount status of the NextCloud Data partition and mounts it too. After"
-echo "mounting it, stops nextcloud services namely PHP Session Clean timer, PHP7.4fpm, MariaDB, Apache2."
+echo "mounting it, stops nextcloud services namely PHP Session Clean timer, PHP8.1fpm, MariaDB, Apache2."
 echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
 echo
 echo
@@ -54,15 +54,15 @@ ufw status
 #echo
 #echo
 #echo "---------------------------------------------------------------------------------------------------"
-#echo "Status of ufw.service, phpsessionclean.timer, php7.4-fpm.service, mariadb.service, apache2.service"
+#echo "Status of ufw.service, phpsessionclean.timer, php8.1-fpm.service, mariadb.service, apache2.service"
 #echo "---------------------------------------------------------------------------------------------------"
-#systemctl status ufw.service, phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service
+#systemctl status ufw.service, phpsessionclean.timer php8.1-fpm.service mariadb.service apache2.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Starting ufw.service apache2.service mariadb.service php7.4-fpm.service phpsessionclean.timer"
+echo "Starting ufw.service apache2.service mariadb.service php8.1-fpm.service phpsessionclean.timer"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl start ufw.service apache2.service mariadb.service php7.4-fpm.service phpsessionclean.timer   
+systemctl start ufw.service apache2.service mariadb.service php8.1-fpm.service phpsessionclean.timer   
 echo
 echo
 echo "Exit"
