@@ -443,6 +443,9 @@ Do the following to put the nextcloud server back on track.
 
 ## Upgrading php7.4 to php8.1 after upgrading to nextcloud 24.0.4 in Lubuntu 20.04(.1?)
 
+References - https://najigram.com/2021/12/upgrade-to-php-8-on-ubuntu-20-04/ 
+
+
 1. `sudo apt update && sudo apt upgrade -y`
 2. `sudo add-apt-repository ppa:ondrej/php -y`
 3. `sudo apt update && sudo apt upgrade -y`
