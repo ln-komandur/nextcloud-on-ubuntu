@@ -438,3 +438,47 @@ Do the following to put the nextcloud server back on track.
 3. Disable the 4 services `sudo systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service` so that they can be manually stopped and started by these scripts
 4. In `/etc/fstab` make sure to have `noauto` in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0`. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
 5. Execute [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) with `su` credentials as needed
+
+
+
+## Upgrading php7.4 to php8.1 for nextcloud 24.0.2 in Lubuntu 20.04(.1?)
+
+1. `sudo apt update && sudo apt upgrade -y`
+2. `sudo add-apt-repository ppa:ondrej/php -y`
+3. `sudo apt update && sudo apt upgrade -y`
+4. `php -v`
+5. `sudo update-alternatives --list php`
+6. `sudo apt remove libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
+7. `sudo apt install php8.1`
+8. `sudo apt install imagemagick php-imagick libapache2-mod-php8.1 php8.1-common php8.1-mysql php8.1-fpm php8.1-gd  php8.1-curl php8.1-zip php8.1-xml php8.1-mbstring php8.1-bz2 php8.1-intl php8.1-bcmath php8.1-gmp`
+`sudo service apache2 restart`
+9. `sudo a2enmod php8.1`
+
+### Configuring PHP8.1
+
+
+1. `cat /etc/php/8.1/fpm/php.ini | grep memory_limit`
+2. `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/fpm/php.ini`
+3. `cat /etc/php/8.1/apache2/php.ini | grep memory_limit`
+4. `sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/apache2/php.ini`
+
+
+1. `cat /etc/php/8.1/fpm/php.ini | grep upload_max_filesize`
+2. `sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/fpm/php.ini`
+3. `cat /etc/php/8.1/fpm/php.ini | grep post_max_size # Get the current value to use in sed command`
+4. `sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/8.1/fpm/php.ini`
+
+
+1. `cat /etc/php/8.1/apache2/php.ini | grep upload_max_filesize # Get the current value to use in sed command`
+2. `sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/apache2/php.ini`
+3. `cat /etc/php/8.1/apache2/php.ini | grep post_max_size # Get the current value to use in sed command`
+4. `sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/8.1/apache2/php.ini`
+
+
+1. `cat /etc/php/8.1/fpm/php.ini | grep output_buffering # Get the current value to use in sed command`
+2. `sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/8.1/fpm/php.ini`
+3. `cat /etc/php/8.1/apache2/php.ini | grep output_buffering # Get the current value to use in sed command`
+4. `sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/8.1/apache2/php.ini`
+
+1. `sudo systemctl restart apache2 # Reload (or restart if needed)`
+
