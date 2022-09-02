@@ -258,12 +258,6 @@ The following are identical for **both Lubuntu and Raspbian**.
 
 `sudo systemctl restart apache2`
 
-Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
-
-`sudo nano /var/www/html/info.php` # Paste ```'<?php phpinfo(); ?>'``` into this file to see the server's PHP information in localhost/info.php
-
-`sudo rm /var/www/html/info.php` # Remove the file after testing
-
 ### Configuring PHP
 This section is identical for **both Lubuntu and Raspbian**.
 
@@ -320,6 +314,13 @@ Repeat this with /etc/php/7.4/apache2/php.ini
 `sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/7.4/apache2/php.ini`
 
 `sudo systemctl reload apache2` # Reload (or restart if needed) 
+
+Check if PHP is configured correctly: Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
+
+`sudo nano /var/www/html/info.php` # Paste ```'<?php phpinfo(); ?>'``` into this file to see the server's PHP information in ```'localhost/info.php'```
+
+`sudo rm /var/www/html/info.php` # Remove the file after testing
+
 
 ---   
 
@@ -497,8 +498,6 @@ In /etc/php/8.1/fpm/php.ini file
 
 `sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/fpm/php.ini`
 
-
-
 `cat /etc/php/8.1/fpm/php.ini | grep post_max_size` # Get the current value to use in sed command
 
 `sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/8.1/fpm/php.ini`
@@ -532,3 +531,8 @@ Repeat this with /etc/php/8.1/apache2/php.ini
 
 `sudo systemctl restart apache2 # Reload (or restart if needed)`
 
+Check if PHP is configured correctly: Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
+
+`sudo nano /var/www/html/info.php` # Paste ```'<?php phpinfo(); ?>'``` into this file to see the server's PHP information in ```'localhost/info.php'```
+
+`sudo rm /var/www/html/info.php` # Remove the file after testing
