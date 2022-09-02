@@ -533,6 +533,8 @@ Repeat this with /etc/php/8.1/apache2/php.ini
 
 Check if PHP is configured correctly: Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
 
-`sudo nano /var/www/html/info.php` # Paste ```'<?php phpinfo(); ?>'``` into this file to see the server's PHP information in ```'localhost/info.php'```
+`sudo nano /var/www/html/info.php` # Paste ```'<?php phpinfo(); ?>'``` into this file to see the server's PHP information in a browser with ```'localhost/info.php'```
 
 `sudo rm /var/www/html/info.php` # Remove the file after testing
+
+Also check the php version in nextcloud browser UI for an admin user, under `/index.php/settings/admin/serverinfo`
