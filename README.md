@@ -22,7 +22,7 @@ This write up is based on the actual `history` of commands executed by following
 ---
 
 ## Why install manually?
-[Why not install via snap?](https://github.com/ln-komandur/linux-utils/blob/master/Removing-snapd.md)
+[Why not install via snap?](https://github.com/ln-komandur/linux-utils/blob/master/why-not-snapd.md)
 
 ---
 
