@@ -1,4 +1,4 @@
-# ***Manually*** install nextcloud server on Ubuntu 22.04 (64 bit) or Lubuntu 20.04 (64 bit) or Raspbian (buster) for limited use within the intranet / home network
+# ***Manually*** install nextcloud server on Ubuntu 22.04 (64 bit) for limited use within the intranet / home network
 ---
 
 ## Useful references - Courtesy credits and Gratitude
@@ -7,6 +7,8 @@
 3. [How to install Nextcloud 20 on Ubuntu Server 20.04](https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/)
 4. [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
 5. [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/)
+
+  **Note:** - Though almost all references use Ubuntu 20.04, the procedure has worked perfectly well on Ubuntu 22.04, Lubuntu 20.04 and Raspbian buster as detailed in earlier versions of this write-up. 
 
 ---
 
@@ -30,27 +32,11 @@ This write up is based on the actual `history` of commands executed by following
 
 ### On Ubuntu 22.04.2 
 1. Linux kernel 5.19.0-35-generic (64 bit)
-2. nextcloud-25.0.4
+2. [nextcloud-25.0.4 server](https://nextcloud.com/changelog/)
 3. mariadb from 11.0.1-MariaDB, client 15.2 for debian-linux-gnu (x86_64) using  EditLine wrapper
 4. OpenJDK version "19.0.2" 2023-01-17, JRE build 19.0.2+7-Ubuntu-0ubuntu322.04
 5. apache2 Server version: Apache/2.4.52 (Ubuntu), Server built:   2023-01-23T18:34:42
 6. PHP 8.1.2-1ubuntu2.11 (cli) (built: Feb 22 2023 22:56:18) (NTS)
-
-### On Lubuntu 20.04.2 
-1. Linux kernel 5.8.0-63-generic (64 bit)
-2. nextcloud-20.0.11
-3. mariadb  Ver 15.1 Distrib 10.5.11-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2
-4. OpenJDK version "16.0.1" 2021-04-20, JRE build 16.0.1+9-Ubuntu-120.04
-5. apache2 Server version: Apache/2.4.41 (Ubuntu)
-
-### On Raspbian GNU/Linux 10 (buster)
-1. Linux raspberrypi 5.10.52-v7+ armv7l GNU/Linux
-2. nextcloud-20.0.11
-3. mariadb  Ver 15.1 Distrib 10.3.29-MariaDB, for debian-linux-gnueabihf (armv7l) using readline 5.2
-4. OpenJDK version "11.0.12" 2021-07-20, JRE build 11.0.12+7-post-Raspbian-2deb10u1
-5. apache2 Server version: Apache/2.4.38 (Raspbian)
-
-
 
 ---
 
@@ -59,7 +45,6 @@ This write up is based on the actual `history` of commands executed by following
 Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)
 
 ### Install Apache
-This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
 
@@ -78,7 +63,6 @@ Assign web root (www-data) as the owner and group for document root (/var/www/ht
 `sudo chown www-data:www-data /var/www/html/ -R`
 
 ### Configure apache to use self signed SSL certificate
-This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 `sudo nano /etc/apache2/conf-available/servername.conf`   # And added the line `ServerName localhost` in this file
 
@@ -95,9 +79,10 @@ The below is slightly different from [Install NextCloud on Ubuntu 20.04 with Apa
 `sudo apache2ctl -t`
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
-This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 **Note:** Though apache is being configured for these, there may be some errors until the installation is fully complete.
+
+`ip a` # Find out your ip address first
 
 `sudo nano /etc/apache2/sites-available/nextcloud.conf`
 
@@ -139,7 +124,7 @@ Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configu
 
 **Note:** Even when the installation is complete Firefox may report an error as `The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies.` . Clicking the `Try Again` button would solve the problem (redirect to https)
 
-Providing `ServerAlias computername.local` helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do not support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
+Providing `ServerAlias computername.local` helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do not support mDNS (Refer [...local hostname doesn't work on Android phones](https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
 
 
 `sudo a2ensite nextcloud.conf`
@@ -151,7 +136,6 @@ Providing `ServerAlias computername.local` helps to use the server url as `https
 `sudo systemctl restart apache2`
 
 ### Configure Uncomplicated Firewall (UFW)
-This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 `sudo ufw status`
 
@@ -167,29 +151,23 @@ Refresh UFW with `sudo ufw disable && sudo ufw enable && sudo ufw status`
 
 
 
-## Install MariaDB 10.5 
-All commands are needed for **Ubuntu 22.04 & Lubuntu 20.04**. Refer comments for those that do not apply for **Raspbian**.
-
-These commands will NOT install MariaDB 10.5.11 on Raspbian. They will most likely install MariaDB 10.3.29 (from defaults)
+## Install MariaDB
 
 Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/) for screenshots
 
-`sudo apt install software-properties-common` # Applies for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
+`sudo apt install software-properties-common`
 
-`sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'` # Applies **ONLY for Ubuntu 22.04 & Lubuntu 20.04**.
+`sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'`
 
-`sudo add-apt-repository 'deb [arch=amd64] http://mariadb.mirror.globo.tech/repo/10.5/ubuntu focal main'` # Applies **ONLY for Lubuntu**.
+`sudo add-apt-repository 'deb [arch=amd64] http://mirror.mariadb.org/repo/11.0.1/ubuntu/ jammy main'`
 
-`sudo add-apt-repository 'deb [arch=amd64] http://mirror.mariadb.org/repo/11.0.1/ubuntu/ jammy main'` # Applies **ONLY for Ubuntu 22.04**.
+`sudo apt update` 
 
-`sudo apt update` # Applies for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
+`sudo apt install mariadb-server mariadb-client` 
 
-`sudo apt install mariadb-server mariadb-client` # Applies for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
-
-`mariadb --version` or `mysql --version` # Applies for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**. Verify if the version intended is installed. Raspbian is most likely to show "mariadb  Ver 15.1 Distrib 10.3.29-MariaDB"
+`mariadb --version` or `mysql --version` # Verify if the version intended is installed. 
 
 ### Configure Mariadb
-This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for screenshots
 
@@ -202,7 +180,6 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 `sudo mariadb -u root` or `mysql -u root -p` ## These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
 
 ### Create nextcloud user account (username and password) on mysql DB
-This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 Refer [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) for screenshots
 
@@ -217,14 +194,13 @@ MariaDB [(none)]> exit;
 ```
 
 ## Prepare the dedicated partition to save nextcloud server's data (user) files 
-This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 1. Create a separte disk partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
 2. Create a directory to mount that partition agnostic of users logged on the PC on which the nextcloud server is running
 `sudo mkdir /media/all-users-nextcloud-data`
-3. Gave the ownership of that directory (to-be partition mount point for nextcloud server's data (user) files) to the web-root
+3. **Assign the ownership of that directory** (to-be partition mount point for nextcloud server's data (user) files) to the web-root
 `sudo chown www-data:www-data /media/all-users-nextcloud-data/ -R`
-4. Got the UUID of the partition at its current mount point using one of the below
+4. Get the UUID of the partition at its current mount point using one of the below
 `ls -l /media/`
 `sudo blkid | grep UUID=`
 5. Edit `/etc/fstab` to include information to mount the partition at the `/media/all-users-nextcloud-data` directory
@@ -246,80 +222,77 @@ The options at the end of this line mean the following
 
 ## Install and Enable PHP Modules
 
-***ONLY for Raspbian:*** Refer "Second method" in [PHP 7.4 on raspbian](https://raspberrypi.stackexchange.com/questions/108149/php-7-4-on-raspbian) and execute the following 5 commands before proceeding with the rest of the commands common to Lubuntu and Raspbian
-
-  1. `sudo apt -y install lsb-release apt-transport-https ca-certificates`
-  2. `sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg`
-  3. `echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/php.list`
-  4. `sudo apt update`
-  5. `sudo apt -y install php7.4`  
-
 Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-The following are identical for **both Lubuntu and Raspbian**. Refer further below for **PHP8.1 on Ubuntu 22.04**
 
-`sudo apt install imagemagick php-imagick libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
+---
 
-`php --version`
+`sudo apt install imagemagick php-imagick libapache2-mod-php8.1 php8.1-common php8.1-mysql php8.1-fpm php8.1-gd  php8.1-curl php8.1-zip php8.1-xml php8.1-mbstring php8.1-bz2 php8.1-intl php8.1-bcmath php8.1-gmp`
+`sudo service apache2 restart`
 
-`sudo systemctl restart apache2`
 
-### Configuring PHP
-This section is identical for **both Lubuntu and Raspbian**. Refer further below for **PHP8.1 on Ubuntu 22.04**
+Enable Apache PHP 8.1 module:
+
+`sudo a2enmod php8.1`
+
+### Configuring PHP8.1
 
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
+
 #### Increase PHP Memory Limit to 512M after checking its current size **in 2 php.ini files**
 
-In /etc/php/7.4/fpm/php.ini file 
+In /etc/php/8.1/fpm/php.ini file 
 
-`cat /etc/php/7.4/fpm/php.ini | grep memory_limit` # Get the current value to use in sed command
+`cat /etc/php/8.1/fpm/php.ini | grep memory_limit` # Get the current value to use in sed command
 
-`sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/fpm/php.ini`
+`sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/fpm/php.ini`
 
-Repeat this with /etc/php/7.4/apache2/php.ini
+Repeat this with /etc/php/8.1/apache2/php.ini
 
-`cat /etc/php/7.4/apache2/php.ini | grep memory_limit` # Get the current value to use in sed command
+`cat /etc/php/8.1/apache2/php.ini | grep memory_limit` # Get the current value to use in sed command
 
-`sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/7.4/apache2/php.ini`
+`sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/apache2/php.ini`
 
 #### Increase Upload File Size Limit to 2G **in 2 php.ini files in 2 places each**
 
-In /etc/php/7.4/fpm/php.ini file 
+In /etc/php/8.1/fpm/php.ini file 
 
-`cat /etc/php/7.4/fpm/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
+`cat /etc/php/8.1/fpm/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
 
-`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/7.4/fpm/php.ini`
+`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/fpm/php.ini`
 
-`cat /etc/php/7.4/fpm/php.ini | grep post_max_size` # Get the current value to use in sed command
+`cat /etc/php/8.1/fpm/php.ini | grep post_max_size` # Get the current value to use in sed command
 
-`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/7.4/fpm/php.ini`
+`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/8.1/fpm/php.ini`
 
-Repeat this with /etc/php/7.4/apache2/php.ini
+Repeat this with /etc/php/8.1/apache2/php.ini
 
-`cat /etc/php/7.4/apache2/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
 
-`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/7.4/apache2/php.ini`
+`cat /etc/php/8.1/apache2/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
 
-`cat /etc/php/7.4/apache2/php.ini | grep post_max_size` # Get the current value to use in sed command
+`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/apache2/php.ini`
 
-`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/7.4/apache2/php.ini`
+`cat /etc/php/8.1/apache2/php.ini | grep post_max_size` # Get the current value to use in sed command
+
+`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/8.1/apache2/php.ini`
 
 #### Disable output_buffering **in 2 php.ini files**
 
-In /etc/php/7.4/fpm/php.ini file 
+In /etc/php/8.1/fpm/php.ini file 
 
-`cat /etc/php/7.4/fpm/php.ini | grep output_buffering` # Get the current value to use in sed command
+`cat /etc/php/8.1/fpm/php.ini | grep output_buffering` # Get the current value to use in sed command
 
-`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/7.4/fpm/php.ini`
+`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/8.1/fpm/php.ini`
 
-Repeat this with /etc/php/7.4/apache2/php.ini
 
-`cat /etc/php/7.4/apache2/php.ini | grep output_buffering` # Get the current value to use in sed command
+Repeat this with /etc/php/8.1/apache2/php.ini
 
-`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/7.4/apache2/php.ini`
+`cat /etc/php/8.1/apache2/php.ini | grep output_buffering` # Get the current value to use in sed command
 
-`sudo systemctl reload apache2` # Reload (or restart if needed) 
+`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/8.1/apache2/php.ini`
+
+`sudo systemctl restart apache2 # Reload (or restart if needed)`
 
 **Check if PHP is configured correctly:** Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
 
@@ -331,15 +304,13 @@ Also check the php version in nextcloud browser UI for an admin user, under `/in
 
 ---   
 
-## Install nextcloud-20.0.11 server - Part 1: terminal (command line) activities
-This section is identical for **both Lubuntu and Raspbian** with nextcloud-20.0.11 and **Ubuntu 22.04** with nextcloud-25.0.4
+## Install nextcloud server - Part 1: terminal (command line) activities
 
 The following is based on [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-[Download nextcloud 20.0.11](https://nextcloud.com/changelog/#latest20). 
 [Download nextcloud 25.0.4](https://download.nextcloud.com/server/releases/nextcloud-25.0.4.zip)
 
-Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against the respective checksum in the sha256 file 
+Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against the [respective checksum in the sha256 file](https://nextcloud.com/changelog/) 
 
 `sudo unzip ./Downloads/nextcloud-*.zip  -d /var/www/` # Extract the installable
 
@@ -348,7 +319,6 @@ Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against
 `sudo systemctl reload apache2` # Reload (or restart if needed) apache before completing the installation through the web browser.
 
 ## Install the nextcloud server - Part 2: Complete the installation in the Web Browser by accessing https://192.168.254.56/nextcloud/ 
-This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
 
@@ -374,7 +344,7 @@ This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
          ```
          'overwriteprotocol' => 'https',
          ``` 
-         The above helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do support mDNS (Refer https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones ), the URL based on the IP address must also be given to use on those devices.
+         The above helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do support mDNS (Refer [...local hostname doesn't work on Android phones](https://Gaveerrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the URL based on the IP address must also be given to use on those devices.
 4. Restart apache `sudo systemctl restart apache2`         
 
 ---
@@ -383,7 +353,7 @@ This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 ### Post installation upgrades
 
-Log in to your nextcloud server with admin user previlleges and upgrade to nextcloud 21 from "Settings -> Administration -> Overview" if prompted
+Log in to your nextcloud server with admin user previlleges and upgrade to nextcloud from "Settings -> Administration -> Overview" if prompted
 
 
 ---
@@ -391,7 +361,7 @@ Log in to your nextcloud server with admin user previlleges and upgrade to nextc
 ## Appendix
 
 
-### Unable to access nextcloud server after it's IP address changed
+### Unable to access nextcloud server after its IP address changed
 
 ---
 
@@ -400,7 +370,8 @@ The nextcloud server's IP address could change for several reasons including, bu
 2. connecting it to a different network, a new router, 
 3. change in DHCP range of the existing router
 4. connecting the nextcloud server to the same network / router through a different network card (e.g. Wired / Wireless, new network card) 
-5. etc. 
+5. SSD / HDD on which nextcloud is installed is moved to a different PC
+6. etc. 
 
 Imagine the nextcloud server's IP address changed from `192.168.254.56` to `192.168.0.27`. After this change, when nextcloud is accessed using the old IP address in the browser (i.e. https://192.168.254.56/nextcloud), an "Access through untrusted domain" page is most likely to be displayed.
 
@@ -476,78 +447,5 @@ Remove php7.4
 
 Install php8.1 . Note that there is no `php8.1-json`. Also note that `imagemagick php-imagick` may already be installed 
 
-`sudo apt install php8.1`
+`sudo apt install php8.1`, and proceed with the steps detailed in **Install and Enable PHP Modules** to complete the upgrade
 
-**The following applies for first time installation in Ubuntu 22.04 and upgrades in Lubuntu 20.04**
-
-`sudo apt install imagemagick php-imagick libapache2-mod-php8.1 php8.1-common php8.1-mysql php8.1-fpm php8.1-gd  php8.1-curl php8.1-zip php8.1-xml php8.1-mbstring php8.1-bz2 php8.1-intl php8.1-bcmath php8.1-gmp`
-`sudo service apache2 restart`
-
-
-Enable Apache PHP 8.1 module:
-
-`sudo a2enmod php8.1`
-
-### Configuring PHP8.1
-
-#### Increase PHP Memory Limit to 512M after checking its current size **in 2 php.ini files**
-
-In /etc/php/8.1/fpm/php.ini file 
-
-`cat /etc/php/8.1/fpm/php.ini | grep memory_limit` # Get the current value to use in sed command
-
-`sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/fpm/php.ini`
-
-Repeat this with /etc/php/8.1/apache2/php.ini
-
-`cat /etc/php/8.1/apache2/php.ini | grep memory_limit` # Get the current value to use in sed command
-
-`sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/apache2/php.ini`
-
-#### Increase Upload File Size Limit to 2G **in 2 php.ini files in 2 places each**
-
-In /etc/php/8.1/fpm/php.ini file 
-
-`cat /etc/php/8.1/fpm/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
-
-`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/fpm/php.ini`
-
-`cat /etc/php/8.1/fpm/php.ini | grep post_max_size` # Get the current value to use in sed command
-
-`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/8.1/fpm/php.ini`
-
-Repeat this with /etc/php/8.1/apache2/php.ini
-
-
-`cat /etc/php/8.1/apache2/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
-
-`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/apache2/php.ini`
-
-`cat /etc/php/8.1/apache2/php.ini | grep post_max_size` # Get the current value to use in sed command
-
-`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/8.1/apache2/php.ini`
-
-#### Disable output_buffering **in 2 php.ini files**
-
-In /etc/php/8.1/fpm/php.ini file 
-
-`cat /etc/php/8.1/fpm/php.ini | grep output_buffering` # Get the current value to use in sed command
-
-`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/8.1/fpm/php.ini`
-
-
-Repeat this with /etc/php/8.1/apache2/php.ini
-
-`cat /etc/php/8.1/apache2/php.ini | grep output_buffering` # Get the current value to use in sed command
-
-`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/8.1/apache2/php.ini`
-
-`sudo systemctl restart apache2 # Reload (or restart if needed)`
-
-**Check if PHP is configured correctly:** Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
-
-`sudo nano /var/www/html/info.php` # Paste `<?php phpinfo(); ?>` into this file to see the server's PHP information in a browser with `localhost/info.php`
-
-`sudo rm /var/www/html/info.php` # Remove the file after testing
-
-Also check the php version in nextcloud browser UI for an admin user, under `/index.php/settings/admin/serverinfo`
