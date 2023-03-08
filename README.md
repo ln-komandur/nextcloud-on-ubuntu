@@ -1,4 +1,4 @@
-# ***Manually*** install nextcloud server on Lubuntu 20.04 (64bit) or Raspbian (buster) for limited use within the intranet / home network
+# ***Manually*** install nextcloud server on Ubuntu 22.04 (64 bit) or Lubuntu 20.04 (64 bit) or Raspbian (buster) for limited use within the intranet / home network
 ---
 
 ## Useful references - Courtesy credits and Gratitude
@@ -28,6 +28,14 @@ This write up is based on the actual `history` of commands executed by following
 
 ## Software and Versions used in this installation
 
+### On Ubuntu 22.04.2 
+1. Linux kernel 5.19.0-35-generic (64 bit)
+2. nextcloud-25.0.4
+3. mariadb from 11.0.1-MariaDB, client 15.2 for debian-linux-gnu (x86_64) using  EditLine wrapper
+4. OpenJDK version "19.0.2" 2023-01-17, JRE build 19.0.2+7-Ubuntu-0ubuntu322.04
+5. apache2 Server version: Apache/2.4.52 (Ubuntu), Server built:   2023-01-23T18:34:42
+6. PHP 8.1.2-1ubuntu2.11 (cli) (built: Feb 22 2023 22:56:18) (NTS)
+
 ### On Lubuntu 20.04.2 
 1. Linux kernel 5.8.0-63-generic (64 bit)
 2. nextcloud-20.0.11
@@ -51,7 +59,7 @@ This write up is based on the actual `history` of commands executed by following
 Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)
 
 ### Install Apache
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
 
@@ -70,7 +78,7 @@ Assign web root (www-data) as the owner and group for document root (/var/www/ht
 `sudo chown www-data:www-data /var/www/html/ -R`
 
 ### Configure apache to use self signed SSL certificate
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 `sudo nano /etc/apache2/conf-available/servername.conf`   # And added the line `ServerName localhost` in this file
 
@@ -87,7 +95,7 @@ The below is slightly different from [Install NextCloud on Ubuntu 20.04 with Apa
 `sudo apache2ctl -t`
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 **Note:** Though apache is being configured for these, there may be some errors until the installation is fully complete.
 
@@ -143,7 +151,7 @@ Providing `ServerAlias computername.local` helps to use the server url as `https
 `sudo systemctl restart apache2`
 
 ### Configure Uncomplicated Firewall (UFW)
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 `sudo ufw status`
 
@@ -160,26 +168,28 @@ Refresh UFW with `sudo ufw disable && sudo ufw enable && sudo ufw status`
 
 
 ## Install MariaDB 10.5 
-All commands are needed for **Lubuntu**. Refer comments for those that do not apply for **Raspbian**.
+All commands are needed for **Ubuntu 22.04 & Lubuntu 20.04**. Refer comments for those that do not apply for **Raspbian**.
 
 These commands will NOT install MariaDB 10.5.11 on Raspbian. They will most likely install MariaDB 10.3.29 (from defaults)
 
 Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/) for screenshots
 
-`sudo apt install software-properties-common` # Applies for **both Lubuntu and Raspbian**.
+`sudo apt install software-properties-common` # Applies for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
-`sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'` # Applies **ONLY for Lubuntu**.
+`sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'` # Applies **ONLY for Ubuntu 22.04 & Lubuntu 20.04**.
 
 `sudo add-apt-repository 'deb [arch=amd64] http://mariadb.mirror.globo.tech/repo/10.5/ubuntu focal main'` # Applies **ONLY for Lubuntu**.
 
-`sudo apt update` # Applies for **both Lubuntu and Raspbian**.
+`sudo add-apt-repository 'deb [arch=amd64] http://mirror.mariadb.org/repo/11.0.1/ubuntu/ jammy main'` # Applies **ONLY for Ubuntu 22.04**.
 
-`sudo apt install mariadb-server mariadb-client` # Applies for **both Lubuntu and Raspbian**.
+`sudo apt update` # Applies for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
-`mariadb --version` or `mysql --version` # Applies for **both Lubuntu and Raspbian**. Raspbian is most likely to show "mariadb  Ver 15.1 Distrib 10.3.29-MariaDB"
+`sudo apt install mariadb-server mariadb-client` # Applies for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
+
+`mariadb --version` or `mysql --version` # Applies for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**. Verify if the version intended is installed. Raspbian is most likely to show "mariadb  Ver 15.1 Distrib 10.3.29-MariaDB"
 
 ### Configure Mariadb
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for screenshots
 
@@ -192,7 +202,7 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 `sudo mariadb -u root` or `mysql -u root -p` ## These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
 
 ### Create nextcloud user account (username and password) on mysql DB
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 Refer [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) for screenshots
 
@@ -207,7 +217,7 @@ MariaDB [(none)]> exit;
 ```
 
 ## Prepare the dedicated partition to save nextcloud server's data (user) files 
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 1. Create a separte disk partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
 2. Create a directory to mount that partition agnostic of users logged on the PC on which the nextcloud server is running
@@ -246,7 +256,7 @@ The options at the end of this line mean the following
 
 Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-The following are identical for **both Lubuntu and Raspbian**.
+The following are identical for **both Lubuntu and Raspbian**. Refer further below for **PHP8.1 on Ubuntu 22.04**
 
 `sudo apt install imagemagick php-imagick libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
 
@@ -255,7 +265,7 @@ The following are identical for **both Lubuntu and Raspbian**.
 `sudo systemctl restart apache2`
 
 ### Configuring PHP
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **both Lubuntu and Raspbian**. Refer further below for **PHP8.1 on Ubuntu 22.04**
 
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
@@ -322,22 +332,23 @@ Also check the php version in nextcloud browser UI for an admin user, under `/in
 ---   
 
 ## Install nextcloud-20.0.11 server - Part 1: terminal (command line) activities
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **both Lubuntu and Raspbian** with nextcloud-20.0.11 and **Ubuntu 22.04** with nextcloud-25.0.4
 
 The following is based on [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
 [Download nextcloud 20.0.11](https://nextcloud.com/changelog/#latest20). 
+[Download nextcloud 25.0.4](https://download.nextcloud.com/server/releases/nextcloud-25.0.4.zip)
 
-Verify the installable file with `sha256sum ./Downloads/nextcloud-20.0.11.zip` against the [checksum for the file](https://download.nextcloud.com/server/releases/nextcloud-20.0.11.zip.sha256) 
+Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against the respective checksum in the sha256 file 
 
-`sudo unzip ./Downloads/nextcloud-20.0.11.zip  -d /var/www/` # Extract the installable
+`sudo unzip ./Downloads/nextcloud-*.zip  -d /var/www/` # Extract the installable
 
 `sudo chown www-data:www-data /var/www/nextcloud/ -R` # Change owner and group from root to www-data
 
 `sudo systemctl reload apache2` # Reload (or restart if needed) apache before completing the installation through the web browser.
 
 ## Install the nextcloud server - Part 2: Complete the installation in the Web Browser by accessing https://192.168.254.56/nextcloud/ 
-This section is identical for **both Lubuntu and Raspbian**.
+This section is identical for **Ubuntu 22.04, Lubuntu 20.04 and Raspbian**.
 
 1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
 
@@ -368,8 +379,10 @@ This section is identical for **both Lubuntu and Raspbian**.
 
 ---
 
-### Your nextcloud-20.0.11 installation on Lubuntu 20.04.2 (64 bit) or Raspbian GNU/Linux 10 (buster) is not complete
-### Post installation Upgrade 
+### Your nextcloud installation is now complete
+
+### Post installation upgrades
+
 Log in to your nextcloud server with admin user previlleges and upgrade to nextcloud 21 from "Settings -> Administration -> Overview" if prompted
 
 
@@ -443,6 +456,8 @@ Do the following to put the nextcloud server back on track.
 
 References - https://najigram.com/2021/12/upgrade-to-php-8-on-ubuntu-20-04/ 
 
+**The following applies for upgrades in Lubuntu 20.04**
+
 Add the PPA for php8.1 (Debian maintained?)
 
 `sudo apt update && sudo apt upgrade -y`
@@ -462,6 +477,8 @@ Remove php7.4
 Install php8.1 . Note that there is no `php8.1-json`. Also note that `imagemagick php-imagick` may already be installed 
 
 `sudo apt install php8.1`
+
+**The following applies for first time installation in Ubuntu 22.04 and upgrades in Lubuntu 20.04**
 
 `sudo apt install imagemagick php-imagick libapache2-mod-php8.1 php8.1-common php8.1-mysql php8.1-fpm php8.1-gd  php8.1-curl php8.1-zip php8.1-xml php8.1-mbstring php8.1-bz2 php8.1-intl php8.1-bcmath php8.1-gmp`
 `sudo service apache2 restart`
