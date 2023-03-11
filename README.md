@@ -48,41 +48,13 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
 
-`sudo apt install -y apache2 apache2-utils`
-
-`systemctl status apache2`
-
-`sudo systemctl start apache2`
-
-`apache2 -v`
-
-Assign web root (www-data) as the owner and group for document root (/var/www/html/)
-
-`ls -l /var/www/html/`
-
-`sudo chown www-data:www-data /var/www/html/ -R`
-
-### Configure apache to use self signed SSL certificate
-
-`sudo nano /etc/apache2/conf-available/servername.conf`   # And added the line `ServerName localhost` in this file
-
-`sudo a2enconf servername.conf`
-
-The below is slightly different from [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) as this nextcloud installation does NOT use TLS certificates from Let's encrypt, and instead uses self-signed certificates like described in [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
-
-`sudo a2enmod ssl`
-
-`sudo a2ensite default-ssl`
-
-`sudo systemctl reload apache2`
-
-`sudo apache2ctl -t`
+**Run [install-and-configure-apache2.sh](install-and-configure-apache2.sh)** as sudo
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
 
 **Note:** Though apache is being configured for these, there may be some errors until the installation is fully complete.
 
-`ip a` # Find out your ip address first
+`ip a # Find out the ip address first`
 
 `sudo nano /etc/apache2/sites-available/nextcloud.conf`
 
@@ -122,18 +94,18 @@ The below is slightly different from [Install NextCloud on Ubuntu 20.04 with Apa
 ```
 Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configure-to-redirect-to-https-site/89135/4) , [Redirect SSLD](https://cwiki.apache.org/confluence/display/HTTPD/RedirectSSL) and [Hardening and Security Guidance](https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html) for details about ```<VirtualHost>``` items in the above conf file. 
 
-**Note:** Even when the installation is complete Firefox may report an error as `The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies.` . Clicking the `Try Again` button would solve the problem (redirect to https)
+**Note:** Even when the installation is complete Firefox may report an error as ***The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies*** . Clicking the **Try Again** button would solve the problem (redirect to https)
 
-Providing `ServerAlias computername.local` helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do not support mDNS (Refer [...local hostname doesn't work on Android phones](https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
+Providing `ServerAlias computername.local` helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on the server. Since Android devices do not support mDNS (Refer [...local hostname doesn't work on Android phones](https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
 
 
-`sudo a2ensite nextcloud.conf`
+`sudo a2ensite nextcloud.conf # Enable the site`
 
-`sudo a2enmod rewrite headers env dir mime setenvif ssl`
+`sudo a2enmod rewrite headers env dir mime setenvif ssl # Enable the apache2 modules`
 
-`sudo apache2ctl -t`
+`sudo apache2ctl -t # Run a configuration file syntax test`
 
-`sudo systemctl restart apache2`
+`sudo systemctl restart apache2 # Restart apache2`
 
 ### Configure Uncomplicated Firewall (UFW)
 
@@ -145,9 +117,9 @@ Providing `ServerAlias computername.local` helps to use the server url as `https
 
 `sudo ufw allow from 192.168.254.0/24 to any port 443 proto tcp`
 
-`sudo ufw allow in from 192.168.254.1 to 224.0.0.0/24` # To allow multicast packets from the router
+`sudo ufw allow in from 192.168.254.1 to 224.0.0.0/24 # To allow multicast packets from the router`
 
-Refresh UFW with `sudo ufw disable && sudo ufw enable && sudo ufw status`
+`sudo ufw disable && sudo ufw enable && sudo ufw status # Refresh UFW `
 
 
 
@@ -165,7 +137,7 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 `sudo apt install mariadb-server mariadb-client` 
 
-`mariadb --version` or `mysql --version` # Verify if the version intended is installed. 
+`mariadb --version` or `mysql --version # Verify if the version intended is installed` 
 
 ### Configure Mariadb
 
@@ -175,15 +147,17 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 `sudo systemctl start mariadb`
 
-`sudo mysql_secure_installation` ## Set up root password, remove anonymous users, disallow remote login, remove test database, reload privilege tables
+`sudo mysql_secure_installation # Set up root password, remove anonymous users, disallow remote login, remove test database, reload privilege tables`
 
-`sudo mariadb -u root` or `mysql -u root -p` ## These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
+`sudo mariadb -u root` or `mysql -u root -p` # These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
 
 ### Create nextcloud user account (username and password) on mysql DB
 
 Refer [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) for screenshots
 
-`sudo mysql` ## Fill out YOUR custom values
+`sudo mysql` 
+
+**Use *YOUR* custom values below**
 
 ```
 MariaDB [(none)]> create database NameForNextCloudDatabase;
@@ -197,17 +171,17 @@ MariaDB [(none)]> exit;
 
 1. Create a separte disk partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
 2. Create a directory to mount that partition agnostic of users logged on the PC on which the nextcloud server is running
-`sudo mkdir /media/all-users-nextcloud-data`
+`sudo mkdir /media/all-users-nextcloud`
 3. **Assign the ownership of that directory** (to-be partition mount point for nextcloud server's data (user) files) to the web-root
-`sudo chown www-data:www-data /media/all-users-nextcloud-data/ -R`
+`sudo chown www-data:www-data /media/all-users-nextcloud/ -R`
 4. Get the UUID of the partition at its current mount point using one of the below
 `ls -l /media/`
 `sudo blkid | grep UUID=`
-5. Edit `/etc/fstab` to include information to mount the partition at the `/media/all-users-nextcloud-data` directory
+5. Edit `/etc/fstab` to include information to mount the partition at the `/media/all-users-nextcloud` directory
 
 `sudo nano /etc/fstab`
 and add the line 
-`UUID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` at the end of the fstab file
+`UUID=<UUID of the partition><tab>/media/all-users-nextcloud<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` at the end of the fstab file
 
 The options at the end of this line mean the following 
 * `noauto` - do not mount this partition at boot time
@@ -252,9 +226,9 @@ Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](h
 
 **Check if PHP is configured correctly:** Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
 
-`sudo nano /var/www/html/info.php` # Paste `<?php phpinfo(); ?>` into this file to see the server's PHP information in a browser with `localhost/info.php`
+`sudo echo '<?php phpinfo(); ?>' > /var/www/html/info.php # To review the server's PHP information in a browser at localhost/info.php`
 
-`sudo rm /var/www/html/info.php` # Remove the file after testing
+`sudo rm /var/www/html/info.php # Remove the file after reviewing`
 
 Also check the php version in nextcloud browser UI for an admin user, under `/index.php/settings/admin/serverinfo`
 
@@ -278,7 +252,7 @@ Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against
 
 1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
 
-2. Create an admin user account (and the first user account) for your nextcloud server
+2. Create an admin user account (and the first user account) for the nextcloud server
 
 3. Give the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also enter the new username and password for the nextcloud database. **Note:** The browser WILL show errors because of trusted domains as 
       1. apache is already configured to redirect `ServerName 192.168.254.56` to `ServerAlias computername.local` http to https
@@ -300,17 +274,18 @@ Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against
          ```
          'overwriteprotocol' => 'https',
          ``` 
-         The above helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on your server. Since Android devices do support mDNS (Refer [...local hostname doesn't work on Android phones](https://Gaveerrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the URL based on the IP address must also be given to use on those devices.
+         The above helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on the server. Since Android devices do support mDNS (Refer [...local hostname doesn't work on Android phones](https://Gaveerrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the URL based on the IP address must also be given to use on those devices.
 4. Restart apache `sudo systemctl restart apache2`         
 
 ---
 
-### Your nextcloud installation is now complete
+### The nextcloud installation is now complete
+
+---
 
 ### Post installation upgrades
 
-Log in to your nextcloud server with admin user previlleges and upgrade to nextcloud from "Settings -> Administration -> Overview" if prompted
-
+Log in to the nextcloud server with admin user previlleges and upgrade to nextcloud from "Settings -> Administration -> Overview" if prompted
 
 ---
 
