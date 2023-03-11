@@ -244,60 +244,11 @@ Enable Apache PHP 8.1 module:
 
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
-
-#### Increase PHP Memory Limit to 512M after checking its current size **in 2 php.ini files**
-
-In /etc/php/8.1/fpm/php.ini file 
-
-`cat /etc/php/8.1/fpm/php.ini | grep memory_limit` # Get the current value to use in sed command
-
-`sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/fpm/php.ini`
-
-Repeat this with /etc/php/8.1/apache2/php.ini
-
-`cat /etc/php/8.1/apache2/php.ini | grep memory_limit` # Get the current value to use in sed command
-
-`sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/8.1/apache2/php.ini`
-
-#### Increase Upload File Size Limit to 2G **in 2 php.ini files in 2 places each**
-
-In /etc/php/8.1/fpm/php.ini file 
-
-`cat /etc/php/8.1/fpm/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
-
-`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/fpm/php.ini`
-
-`cat /etc/php/8.1/fpm/php.ini | grep post_max_size` # Get the current value to use in sed command
-
-`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/8.1/fpm/php.ini`
-
-Repeat this with /etc/php/8.1/apache2/php.ini
-
-
-`cat /etc/php/8.1/apache2/php.ini | grep upload_max_filesize` # Get the current value to use in sed command
-
-`sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/apache2/php.ini`
-
-`cat /etc/php/8.1/apache2/php.ini | grep post_max_size` # Get the current value to use in sed command
-
-`sudo sed -i 's/post_max_size = 8M/post_max_size = 2G/g' /etc/php/8.1/apache2/php.ini`
-
-#### Disable output_buffering **in 2 php.ini files**
-
-In /etc/php/8.1/fpm/php.ini file 
-
-`cat /etc/php/8.1/fpm/php.ini | grep output_buffering` # Get the current value to use in sed command
-
-`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/8.1/fpm/php.ini`
-
-
-Repeat this with /etc/php/8.1/apache2/php.ini
-
-`cat /etc/php/8.1/apache2/php.ini | grep output_buffering` # Get the current value to use in sed command
-
-`sudo sed -i 's/output_buffering = 4096/output_buffering = 0/g' /etc/php/8.1/apache2/php.ini`
-
-`sudo systemctl restart apache2 # Reload (or restart if needed)`
+**Run [Configure-php-settings.sh](Configure-php-settings.sh)** to 
+1. Increase PHP Memory Limit to 512M after checking its current size in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini
+2. Increase Upload File Size Limit to 2G in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini  in 2 places each 
+3. Disable output_buffering in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini
+4. Restart apache
 
 **Check if PHP is configured correctly:** Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
 
