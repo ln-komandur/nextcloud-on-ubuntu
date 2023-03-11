@@ -12,10 +12,11 @@ if (($EUID != 0)); then
   fi
   exit
 fi
+echo "#############################################################################"
 echo "This script Installs and Configures apache2 for nextcloud server installation"
-echo "-----------------------------------------------------------------------------"
-echo "Installing apache2"
-echo "------------------"
+echo "#############################################################################"
+echo "Step: A - Installing apache2"
+echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 echo
 apt install apache2 apache2-utils
 
@@ -41,8 +42,8 @@ systemctl start apache2
 
 echo
 echo
-echo "Who is owning document root (/var/www/html/) now?"
-echo "-------------------------------------------------"
+echo "Step: B - document root (/var/www/html/) ownership. Now with:"
+echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 echo
 ls -l /var/www/html/
 
@@ -62,8 +63,8 @@ apache2ctl -t
 
 echo
 echo
-echo "Setting the 'ServerName' directive globally with 'ServerName localhost' in /etc/apache2/conf-available/servername.conf"
-echo "----------------------------------------------------------------------------------------------------------------------"
+echo "Step: C - Setting the 'ServerName' directive globally with 'ServerName localhost' in /etc/apache2/conf-available/servername.conf"
+echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 echo 'ServerName localhost' > /etc/apache2/conf-available/servername.conf # And added the line ServerName localhost in this file
 echo "Enabling the new configuration with the 'ServerName' directive"
 echo "--------------------------------------------------------------"
@@ -80,8 +81,8 @@ apache2ctl -t
 
 echo
 echo
-echo "Enabling the apache2 ssl module"
-echo "-------------------------------"
+echo "Step: D - Enabling the apache2 ssl module"
+echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 echo
 a2enmod ssl
 
