@@ -44,11 +44,11 @@ This write up is based on the actual `history` of commands executed by following
 
 Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)
 
-### Install Apache
+### Install Apache and do basic set-up
 
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
 
-**Run [install-and-configure-apache2.sh](install-and-configure-apache2.sh)** as sudo
+**Run [1-install-and-setup-apache2.sh](1-install-and-setup-apache2.sh)** as sudo
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
 
