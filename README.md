@@ -31,12 +31,12 @@ This write up is based on the actual `history` of commands executed by following
 ## Software and Versions used in this installation
 
 ### On Ubuntu 22.04.2 
-1. Linux kernel 5.19.0-35-generic (64 bit)
-2. [nextcloud-25.0.4 server](https://nextcloud.com/changelog/)
-3. mariadb  Ver 15.1 Distrib 10.11.2-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper
-4. OpenJDK version "19.0.2" 2023-01-17, JRE build 19.0.2+7-Ubuntu-0ubuntu322.04
-5. apache2 Server version: Apache/2.4.52 (Ubuntu), Server built:   2023-01-23T18:34:42
-6. PHP 8.1.2-1ubuntu2.11 (cli) (built: Feb 22 2023 22:56:18) (NTS)
+1. Linux kernel 5.19.0-35-generic (64 bit) - ***the latest as of March 2023***
+2. [nextcloud-25.0.4 server](https://nextcloud.com/changelog/) - ***the latest as of March 2023***
+3. mariadb  Ver 15.1 Distrib 10.11.2-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper - ***mariadb 10.11 is LTS, maintained until Feb 2028***
+4. OpenJDK version "19.0.2" 2023-01-17, JRE build 19.0.2+7-Ubuntu-0ubuntu322.04 - ***the latest as of March 2023***
+5. apache2 Server version: Apache/2.4.52 (Ubuntu), Server built:   2023-01-23T18:34:42 - ***from Ubuntu 22.04 defaults***
+6. PHP 8.1.2-1ubuntu2.11 (cli) (built: Feb 22 2023 22:56:18) (NTS) - ***nextcloud 25 will not run on php8.2 or later. Also php8.1 is from Ubuntu 22.04 defaults***
 
 ---
 
