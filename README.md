@@ -33,7 +33,7 @@ This write up is based on the actual `history` of commands executed by following
 ### On Ubuntu 22.04.2 
 1. Linux kernel 5.19.0-35-generic (64 bit)
 2. [nextcloud-25.0.4 server](https://nextcloud.com/changelog/)
-3. mariadb from 11.0.1-MariaDB, client 15.2 for debian-linux-gnu (x86_64) using  EditLine wrapper
+3. mariadb  Ver 15.1 Distrib 10.11.2-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper
 4. OpenJDK version "19.0.2" 2023-01-17, JRE build 19.0.2+7-Ubuntu-0ubuntu322.04
 5. apache2 Server version: Apache/2.4.52 (Ubuntu), Server built:   2023-01-23T18:34:42
 6. PHP 8.1.2-1ubuntu2.11 (cli) (built: Feb 22 2023 22:56:18) (NTS)
@@ -159,7 +159,7 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 `sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'`
 
-`sudo add-apt-repository 'deb [arch=amd64] http://mirror.mariadb.org/repo/11.0.1/ubuntu/ jammy main'`
+`sudo add-apt-repository 'deb [arch=amd64] http://mirror.mariadb.org/repo/10.11.2/ubuntu/ jammy main'`
 
 `sudo apt update` 
 
@@ -227,7 +227,12 @@ Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.
 
 ---
 
+`sudo apt install php8.1`
+
+`php -v`
+
 `sudo apt install imagemagick php-imagick libapache2-mod-php8.1 php8.1-common php8.1-mysql php8.1-fpm php8.1-gd  php8.1-curl php8.1-zip php8.1-xml php8.1-mbstring php8.1-bz2 php8.1-intl php8.1-bcmath php8.1-gmp`
+
 `sudo service apache2 restart`
 
 
