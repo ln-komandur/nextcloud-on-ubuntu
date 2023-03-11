@@ -169,7 +169,7 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 ### Configure Mariadb
 
-Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for screenshots
+Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/) or [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for screenshots
 
 `systemctl status mariadb`
 
@@ -245,9 +245,9 @@ Enable Apache PHP 8.1 module:
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
 **Run [Configure-php-settings.sh](Configure-php-settings.sh)** to 
-1. Increase PHP Memory Limit to 512M after checking its current size in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini
-2. Increase Upload File Size Limit to 2G in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini  in 2 places each 
-3. Disable output_buffering in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini
+1. Increase PHP Memory Limit to 512M in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is 128M***
+2. Increase Upload File Size Limit to 2G in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini  in 2 places each ***if it is 2M***
+3. Disable output_buffering in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is set to any values (i.e. enabled)***
 4. Restart apache
 
 **Check if PHP is configured correctly:** Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
@@ -385,7 +385,16 @@ References - https://najigram.com/2021/12/upgrade-to-php-8-on-ubuntu-20-04/
 
 **The following applies for upgrades in Lubuntu 20.04**
 
-Add the PPA for php8.1 (Debian maintained?)
+
+Remove php7.4
+
+`php -v`
+
+`sudo apt remove php7.4 libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
+
+`php -v`
+
+Add the PPA for php8.1 (Not sure if this is Debian maintained)
 
 `sudo apt update && sudo apt upgrade -y`
 
@@ -393,15 +402,6 @@ Add the PPA for php8.1 (Debian maintained?)
 
 `sudo apt update && sudo apt upgrade -y`
 
-`php -v`
-
 `sudo update-alternatives --list php`
 
-Remove php7.4
-
-`sudo apt remove libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
-
-Install php8.1 . Note that there is no `php8.1-json`. Also note that `imagemagick php-imagick` may already be installed 
-
-`sudo apt install php8.1`, and proceed with the steps detailed in **Install and Enable PHP Modules** to complete the upgrade
-
+Proceed with the steps detailed in **Install and Enable PHP Modules** to install php8.1 and complete the upgrade. Note that there is no `php8.1-json`, and  `imagemagick php-imagick` may already be installed. 
