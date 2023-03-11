@@ -376,32 +376,3 @@ Do the following to put the nextcloud server back on track.
 3. Disable the 4 services `sudo systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service` so that they can be manually stopped and started by these scripts
 4. In `/etc/fstab` make sure to have `noauto` in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0`. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
 5. Execute [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) with `su` credentials as needed
-
-
-
-## Upgrading php7.4 to php8.1 after upgrading to nextcloud 24.0.4 on Lubuntu 20.04.5
-
-References - https://najigram.com/2021/12/upgrade-to-php-8-on-ubuntu-20-04/ 
-
-**The following applies for upgrades in Lubuntu 20.04**
-
-
-Remove php7.4
-
-`php -v`
-
-`sudo apt remove php7.4 libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-fpm php7.4-gd php7.4-json php7.4-curl php7.4-zip php7.4-xml php7.4-mbstring php7.4-bz2 php7.4-intl php7.4-bcmath php7.4-gmp`
-
-`php -v`
-
-Add the PPA for php8.1 (Not sure if this is Debian maintained)
-
-`sudo apt update && sudo apt upgrade -y`
-
-`sudo add-apt-repository ppa:ondrej/php -y`
-
-`sudo apt update && sudo apt upgrade -y`
-
-`sudo update-alternatives --list php`
-
-Proceed with the steps detailed in **Install and Enable PHP Modules** to install php8.1 and complete the upgrade. Note that there is no `php8.1-json`, and  `imagemagick php-imagick` may already be installed. 
