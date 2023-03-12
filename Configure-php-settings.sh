@@ -87,5 +87,13 @@ systemctl restart apache2 # Reload (or restart if needed)
 #
 echo
 echo
+echo '<?php phpinfo(); ?>' > /var/www/html/info.php # To review the server's PHP information in a browser at localhost/info.php
+echo "A test file (/var/www/html/info.php) has been created to review the server's PHP information in a browser." 
+echo "Click and open http://localhost/info.php in a browser."
+echo "This script will now delete /var/www/html/info.php after your review."
+read -p "Press enter to continue with its deletion."
+rm /var/www/html/info.php # Remove the file after reviewing
+echo
+echo
 echo "Exit"
 exit
