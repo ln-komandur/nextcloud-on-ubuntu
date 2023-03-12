@@ -12,8 +12,8 @@ if (($EUID != 0)); then
   fi
   exit
 fi
-echo "This script stops nextcloud services namely PHP Session Clean timer, PHP8.1fpm, MariaDB, Apache2. After"
-echo "stopping these services, it reports the mount status of the NextCloud Data partition and unmounts it too"
+echo "This script stops nextcloud services namely PHP Session Clean timer, PHP8.1fpm, MariaDB, Apache2."
+echo "It then disables UFW, reports the mount status of the NextCloud Data partition and unmounts it too."
 echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
 #echo
 #echo
