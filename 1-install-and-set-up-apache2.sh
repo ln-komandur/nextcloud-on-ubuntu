@@ -15,6 +15,9 @@ fi
 echo "#############################################################################"
 echo "This script Installs and Configures apache2 for nextcloud server installation"
 echo "#############################################################################"
+echo
+echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
+echo
 echo "Step: A - Installing apache2"
 echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 echo
