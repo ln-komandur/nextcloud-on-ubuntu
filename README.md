@@ -19,7 +19,7 @@ Unlike the installations in the above references, the modifications in this inst
 2. A **self-signed security certificate** is used
 3. **No DNS lookups** are used. However **mDNS lookups** from avahi.service are leveraged as clients are within the intranet
 
-This write up is based on the actual `history` of commands executed by following a blend of the above references
+This write up is based on the actual `history` of commands executed by following a blend of the above references. 192.168.254.56 is the example ip address.
 
 ---
 
@@ -191,8 +191,8 @@ Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against
 
 `sudo systemctl reload apache2` # Reload (or restart if needed) apache before completing the installation through the web browser.
 
-## Install the nextcloud server - Part 2: Complete the installation in the Web Browser by accessing https://192.168.254.56/nextcloud/ 
-
+## Install the nextcloud server - Part 2: Complete the installation in a Browser
+...by accessing https://192.168.254.56/nextcloud/
 1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
 
 2. Create an admin user account (and the first user account) for the nextcloud server
@@ -293,4 +293,4 @@ Do the following to put the nextcloud server back on track.
 2. Give execute permissions to both scrips with `chmod +x <script-name.sh>`
 3. Disable the 4 services `sudo systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service` so that they can be manually stopped and started by these scripts
 4. In `/etc/fstab` make sure to have `noauto` in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0`. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
-5. Execute [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) with `su` credentials as needed
+5. Execute [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) with `sudo` credentials as needed
