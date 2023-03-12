@@ -15,7 +15,9 @@ fi
 
 echo "This script configures Apache on a nextcloud server installation to redirect to https, and to use alias wherever supported by avahi.service"
 echo "###########################################################################################################################################"
-
+echo
+echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
+echo
 echo "The Hostname of this server is : " $HOSTNAME
 
 #http://moo.nac.uci.edu/~hjm/biolinux/Linux_Tutorial_12.html gives "ifconfig | grep -A1 "wlan\|wlp"| grep inet | cut -f2 -d: | cut -f1 -d' ' "
