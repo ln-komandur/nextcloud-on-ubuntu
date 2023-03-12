@@ -52,17 +52,18 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
 
-**Run [2-configure-https-and-alias.sh](2-configure-https-and-alias.sh)**. It will prompt and authehticate for `sudo` privilege 
+Providing `ServerAlias computername.local` helps to use the server url as _https://computername.local/nextcloud_ from Linux laptops and iOS devices on the intranet if _avahi-daemon.service_ is running on the server. Since Android devices do not support mDNS (Refer [...local hostname doesn't work on Android phones](https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
 
-**Note:** Though apache is being configured for these, there may be some errors until the installation is fully complete.
+**Run [2-configure-https-and-alias.sh](2-configure-https-and-alias.sh)**. It will prompt and authehticate for `sudo` privilege 
 
 The script configures slightly different from [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) as this nextcloud installation **DOES NOT** choose to use a DNS look up. It is based on both [How to install Nextcloud 20 on Ubuntu Server 20.04](https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/) and [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
 
 Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configure-to-redirect-to-https-site/89135/4) , [Redirect SSLD](https://cwiki.apache.org/confluence/display/HTTPD/RedirectSSL) and [Hardening and Security Guidance](https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html) for details about ```<VirtualHost>``` items in the conf file created by the script. 
 
-**Note:** Even when the installation is complete Firefox may report an error as ***The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies*** . Clicking the **Try Again** button would solve the problem (redirect to https)
+**Note:** 
+1.  Despite these configurations, there may be some errors until the installation is _**fully complete**_.
+2.  Even when the installation is complete Firefox may report an error as ***The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies*** . Clicking the **Try Again** button would solve the problem (redirect to https)
 
-Providing `ServerAlias computername.local` helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on the server. Since Android devices do not support mDNS (Refer [...local hostname doesn't work on Android phones](https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
 
 ### Configure Uncomplicated Firewall (UFW)
 
