@@ -48,64 +48,21 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
 
-**Run [1-install-and-setup-apache2.sh](1-install-and-setup-apache2.sh)** as sudo
+**Run [1-install-and-setup-apache2.sh](1-install-and-setup-apache2.sh)** as `sudo`
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
 
+**Run [2-configure-https-and-alias.sh](2-configure-https-and-alias.sh)** as `sudo`
+
 **Note:** Though apache is being configured for these, there may be some errors until the installation is fully complete.
 
-`ip a # Find out the ip address first`
+The script configures slightly different from [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) as this nextcloud installation **DOES NOT** choose to use a DNS look up. It is based on both [How to install Nextcloud 20 on Ubuntu Server 20.04](https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/) and [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
 
-`sudo nano /etc/apache2/sites-available/nextcloud.conf`
-
-The below is slightly different from [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) as this nextcloud installation DOES NOT choose to use a DNS look up. These lines below are based on both [How to install Nextcloud 20 on Ubuntu Server 20.04](https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/) and [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
-
-
-```
-<VirtualHost *:80>
-   ServerName 192.168.254.56
-   ServerAlias computername.local
-   # Redirects any request to http://192.168.254.56/nextcloud or http://computername.local/nextcloud to https
-   Redirect permanent /nextcloud https://computername.local/nextcloud
-</VirtualHost>
-
-<VirtualHost *:443>
-    ServerName 192.168.254.56
-    ServerAlias computername.local
-    Alias /nextcloud "/var/www/nextcloud/"
-    ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
-    CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
-    <Directory /var/www/html/nextcloud/>
-        Require all granted
-        Options FollowSymlinks MultiViews
-        AllowOverride All
-            <IfModule mod_dav.c>
-                Dav off
-            </IfModule>     
-        SetEnv HOME /var/www/nextcloud
-        SetEnv HTTP_HOME /var/www/nextcloud
-        Satisfy Any
-    </Directory>
-    <IfModule mod_headers.c>
-      Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
-    </IfModule>
-</VirtualHost>
-
-```
-Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configure-to-redirect-to-https-site/89135/4) , [Redirect SSLD](https://cwiki.apache.org/confluence/display/HTTPD/RedirectSSL) and [Hardening and Security Guidance](https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html) for details about ```<VirtualHost>``` items in the above conf file. 
+Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configure-to-redirect-to-https-site/89135/4) , [Redirect SSLD](https://cwiki.apache.org/confluence/display/HTTPD/RedirectSSL) and [Hardening and Security Guidance](https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html) for details about ```<VirtualHost>``` items in the conf file created by the script. 
 
 **Note:** Even when the installation is complete Firefox may report an error as ***The page isn’t redirecting properly  Firefox has detected that the server is redirecting the request for this address in a way that will never complete. This problem can sometimes be caused by disabling or refusing to accept cookies*** . Clicking the **Try Again** button would solve the problem (redirect to https)
 
 Providing `ServerAlias computername.local` helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on the server. Since Android devices do not support mDNS (Refer [...local hostname doesn't work on Android phones](https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
-
-
-`sudo a2ensite nextcloud.conf # Enable the site`
-
-`sudo a2enmod rewrite headers env dir mime setenvif ssl # Enable the apache2 modules`
-
-`sudo apache2ctl -t # Run a configuration file syntax test`
-
-`sudo systemctl restart apache2 # Restart apache2`
 
 ### Configure Uncomplicated Firewall (UFW)
 
