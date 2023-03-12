@@ -15,9 +15,11 @@ fi
 
 echo "This script configures Uncomplicated Firewall (UFW) on a nextcloud server installation"
 echo "######################################################################################"
-
-#http://moo.nac.uci.edu/~hjm/biolinux/Linux_Tutorial_12.html gives "ifconfig | grep -A1 "wlan\|wlp"| grep inet | cut -f2 -d: | cut -f1 -d' ' "
-#https://www.unix.com/shell-programming-and-scripting/112831-trim-last-octate-ip-address-using-bash-script.html trim last octate of ip address using bash script
+echo
+echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
+echo
+#http://moo.nac.uci.edu/~hjm/biolinux/Linux_Tutorial_12.html - gives "ifconfig | grep -A1 "wlan\|wlp"| grep inet | cut -f2 -d: | cut -f1 -d' ' "
+#https://www.unix.com/shell-programming-and-scripting/112831-trim-last-octate-ip-address-using-bash-script.html - trim last octate of ip address using bash script
 
 wlan_ip4address_3_blocks=`ip a | grep -A1 "wlan\|wlp"| grep inet | cut -f6 -d' ' | cut -f1 -d/ | cut -f1-3 -d.`
 #echo "The first 3 blocks of wireless IP4 address of this server is : " $wlan_ip4address_3_blocks
