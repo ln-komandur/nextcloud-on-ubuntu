@@ -30,19 +30,18 @@ conf_file_path="/etc/apache2/sites-available/nextcloud.conf"
 
 echo
 echo
-echo "Step A :Creating the template configuration file at " $conf_file_path
+echo "Step A :Creating the "$conf_file_path" configuration file"
 echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 
 echo '<VirtualHost *:80>
-   ServerName computer_ip
-   ServerAlias computer_name.local
-   # Redirects any request to http://computer_ip/nextcloud or http://computer_name.local/nextcloud to https
-   Redirect permanent /nextcloud https://computer_name.local/nextcloud
+   ServerName '$wlan_ip4address'
+   ServerAlias '$HOSTNAME'.local
+   # Redirects any request to http://'$wlan_ip4address'/nextcloud or http://'$HOSTNAME'.local/nextcloud to https
+   Redirect permanent /nextcloud https://'$HOSTNAME'.local/nextcloud
 </VirtualHost>
-
 <VirtualHost *:443>
-    ServerName computer_ip
-    ServerAlias computer_name.local
+    ServerName '$wlan_ip4address'
+    ServerAlias '$HOSTNAME'.local
     Alias /nextcloud "/var/www/nextcloud/"
     ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
     CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
@@ -61,14 +60,6 @@ echo '<VirtualHost *:80>
       Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
     </IfModule>
 </VirtualHost>' > $conf_file_path
-
-echo
-echo
-echo "Replacing the hostname and wireless ip4 address of the server in the template configuration file as " $HOSTNAME ", and " $wlan_ip4address
-
-sed -i 's/computer_name/'"$HOSTNAME"'/g' $conf_file_path
-sed -i 's/computer_ip/'"$wlan_ip4address"'/g' $conf_file_path
-
 
 echo
 echo
