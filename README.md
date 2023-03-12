@@ -67,19 +67,7 @@ Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configu
 
 ### Configure Uncomplicated Firewall (UFW)
 
-`sudo ufw status`
-
-`sudo ufw allow from 192.168.254.0/24 to any port 22 proto tcp`
-
-`sudo ufw allow from 192.168.254.0/24 to any port 80 proto tcp`
-
-`sudo ufw allow from 192.168.254.0/24 to any port 443 proto tcp`
-
-`sudo ufw allow in from 192.168.254.1 to 224.0.0.0/24 # To allow multicast packets from the router`
-
-`sudo ufw disable && sudo ufw enable && sudo ufw status # Refresh UFW `
-
-
+**Run [3-configure-ufw.sh](3-configure-ufw.sh)**. It will prompt and authehticate for `sudo` privilege
 
 ## Install MariaDB
 
