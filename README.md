@@ -176,17 +176,14 @@ Enable Apache PHP 8.1 module:
 
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
-**Run [Configure-php-settings.sh](Configure-php-settings.sh)** to 
+**Run [Configure-php-settings.sh](Configure-php-settings.sh)** (it will prompt and authehticate for `sudo` privilege) to 
 1. Increase PHP Memory Limit to 512M in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is 128M***
 2. Increase Upload File Size Limit to 2G in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini  in 2 places each ***if it is 2M***
 3. Disable output_buffering in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is set to any values (i.e. enabled)***
 4. Restart apache
-
-**Check if PHP is configured correctly:** Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for the below test
-
-`sudo echo '<?php phpinfo(); ?>' > /var/www/html/info.php # To review the server's PHP information in a browser at localhost/info.php`
-
-`sudo rm /var/www/html/info.php # Remove the file after reviewing`
+5. Create a test file (/var/www/html/info.php) to review the server's PHP information  
+6. Allow the user to review the server's PHP information in a browser through http://localhost/info.php. _Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)_
+7. Delete the test file after waiting for the user to press the enter key
 
 Also check the php version in nextcloud browser UI for an admin user, under `/index.php/settings/admin/serverinfo`
 
