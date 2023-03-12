@@ -48,11 +48,11 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
 
-**Run [1-install-and-setup-apache2.sh](1-install-and-setup-apache2.sh)** as `sudo`
+**Run [1-install-and-setup-apache2.sh](1-install-and-setup-apache2.sh)**. It will prompt and authehticate for `sudo` privilege 
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
 
-**Run [2-configure-https-and-alias.sh](2-configure-https-and-alias.sh)** as `sudo`
+**Run [2-configure-https-and-alias.sh](2-configure-https-and-alias.sh)**. It will prompt and authehticate for `sudo` privilege 
 
 **Note:** Though apache is being configured for these, there may be some errors until the installation is fully complete.
 
