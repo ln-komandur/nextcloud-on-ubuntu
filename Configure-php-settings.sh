@@ -13,6 +13,9 @@ if (($EUID != 0)); then
   exit
 fi
 echo "This script Configures php settings for nextcloud server installation"
+echo "#####################################################################"
+echo
+echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
 # MEMORY_LIMIT
 echo
 echo
