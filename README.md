@@ -83,7 +83,7 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 `sudo apt install mariadb-server mariadb-client` 
 
-`mariadb --version` or `mysql --version # Verify if the version intended is installed` 
+`mariadb --version` or `mysql --version` #Verify if the version intended is installed
 
 ### Configure Mariadb
 
@@ -95,7 +95,7 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 `sudo mysql_secure_installation # Set up root password, remove anonymous users, disallow remote login, remove test database, reload privilege tables`
 
-`sudo mariadb -u root` or `mysql -u root -p` # These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
+`sudo mariadb -u root` or `mysql -u root -p` #These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
 
 ### Create nextcloud user account (username and password) on mysql DB
 
@@ -115,30 +115,11 @@ MariaDB [(none)]> exit;
 
 ## Prepare the dedicated partition to save nextcloud server's data (user) files 
 
-1. Create a separte disk partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
-2. Create a directory to mount that partition agnostic of users logged on the PC on which the nextcloud server is running
-`sudo mkdir /media/all-users-nextcloud`
-3. **Assign the ownership of that directory** (to-be partition mount point for nextcloud server's data (user) files) to the web-root
-`sudo chown www-data:www-data /media/all-users-nextcloud/ -R`
-4. Get the UUID of the partition at its current mount point using one of the below
-`ls -l /media/`
-`sudo blkid | grep UUID=`
-5. Edit `/etc/fstab` to include information to mount the partition at the `/media/all-users-nextcloud` directory
+1. Create a separate partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
+2. Follow the steps in [Create common mount points for partitions shared by all users and include them in fstab](https://github.com/ln-komandur/linux-utils/blob/master/common-mountpoints.md)
+3. `sudo chown www-data:www-data /media/all-users-nextcloud/ -R` #**Assign the ownership of the mount point for the nextcloud server's data partition** to the web-root
 
-`sudo nano /etc/fstab`
-and add the line 
-`UUID=<UUID of the partition><tab>/media/all-users-nextcloud<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` at the end of the fstab file
 
-The options at the end of this line mean the following 
-* `noauto` - do not mount this partition at boot time
-* `nosuid` - ignore / disregard the setguid (sticky bit) if set
-* `nodev` - cannot contain special devices as a security precaution
-* `noexec` - binaries cannot be executed in this partition
-* `nouser` - only root can mount this partition. In the current context, this setting is intentional to act like a server switch to make the data folder available to nextcloud clients only if root mounts it
-* `nofail` - ignore device errors if any
-
-6. Check if the partition can be mounted at the new mount point by
-`sudo mount -a`
 
 ## Install and Enable PHP Modules
 
