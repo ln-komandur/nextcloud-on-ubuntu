@@ -48,13 +48,13 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 
 `sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
 
-**Run [1-install-and-setup-apache2.sh](1-install-and-setup-apache2.sh)**. It will prompt and authehticate for `sudo` privilege 
+**Run [1-install-and-setup-apache2.sh](1-install-and-setup-apache2.sh)**. It will prompt and authenticate for `sudo` privilege 
 
 ### Configure Apache to redirect to https, and to use alias wherever supported by avahi.service
 
 Providing `ServerAlias computername.local` helps to use the server url as _https://computername.local/nextcloud_ from Linux laptops and iOS devices on the intranet if _avahi-daemon.service_ is running on the server. Since Android devices do not support mDNS (Refer [...local hostname doesn't work on Android phones](https://raspberrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the `ServerName` has to remain as the IP address to make it accessible from those devices.
 
-**Run [2-configure-https-and-alias.sh](2-configure-https-and-alias.sh)**. It will prompt and authehticate for `sudo` privilege 
+**Run [2-configure-https-and-alias.sh](2-configure-https-and-alias.sh)**. It will prompt and authenticate for `sudo` privilege 
 
 The script configures slightly different from [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) as this nextcloud installation **DOES NOT** choose to use a DNS look up. It is based on both [How to install Nextcloud 20 on Ubuntu Server 20.04](https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/) and [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
 
@@ -67,7 +67,7 @@ Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configu
 
 ### Configure Uncomplicated Firewall (UFW)
 
-**Run [3-configure-ufw.sh](3-configure-ufw.sh)**. It will prompt and authehticate for `sudo` privilege
+**Run [3-configure-ufw.sh](3-configure-ufw.sh)**. It will prompt and authenticate for `sudo` privilege
 
 ## Install MariaDB
 
@@ -164,7 +164,7 @@ Enable Apache PHP 8.1 module:
 
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
-**Run [Configure-php-settings.sh](Configure-php-settings.sh)** (it will prompt and authehticate for `sudo` privilege) to 
+**Run [Configure-php-settings.sh](Configure-php-settings.sh)** (it will prompt and authenticate for `sudo` privilege) to 
 1. Increase PHP Memory Limit to 512M in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is 128M***
 2. Increase Upload File Size Limit to 2G in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini  in 2 places each ***if it is 2M***
 3. Disable output_buffering in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is set to any values (i.e. enabled)***
