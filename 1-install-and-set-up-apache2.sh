@@ -21,7 +21,11 @@ echo
 echo "Step: A - Installing apache2"
 echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 echo
-apt install apache2 apache2-utils
+
+if ! nala install apache2 apache2-utils; then
+    apt install apache2 apache2-utils
+fi
+
 
 echo
 echo
