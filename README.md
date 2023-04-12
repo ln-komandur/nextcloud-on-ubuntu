@@ -145,7 +145,7 @@ Enable Apache PHP 8.1 module:
 
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
-**Run [Configure-php-settings.sh](Configure-php-settings.sh)** (it will prompt and authenticate for `sudo` privilege) to 
+**Run [4-Configure-php-settings.sh](4-Configure-php-settings.sh)** (it will prompt and authenticate for `sudo` privilege) to 
 1. Increase PHP Memory Limit to 512M in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is 128M***
 2. Increase Upload File Size Limit to 2G in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini  in 2 places each ***if it is 2M***
 3. Disable output_buffering in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is set to any values (i.e. enabled)***
