@@ -32,7 +32,7 @@ This write up is based on the actual `history` of commands executed by following
 
 ### On Ubuntu 22.04.2 
 1. Linux kernel 5.19.0-35-generic (64 bit) - ***the latest as of March 2023***
-2. [nextcloud-25.0.4 server](https://nextcloud.com/changelog/) - ***the latest as of March 2023***
+2. [nextcloud-26.0.0 server](https://nextcloud.com/changelog/) - ***the latest as of April 2023***
 3. mariadb  Ver 15.1 Distrib 10.11.2-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper - ***mariadb 10.11 is LTS, maintained until Feb 2028***
 4. OpenJDK version "19.0.2" 2023-01-17, JRE build 19.0.2+7-Ubuntu-0ubuntu322.04 - ***the latest as of March 2023***
 5. apache2 Server version: Apache/2.4.52 (Ubuntu), Server built:   2023-01-23T18:34:42 - ***from Ubuntu 22.04 defaults***
@@ -93,7 +93,7 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 `sudo systemctl start mariadb`
 
-`sudo mysql_secure_installation # Set up root password, remove anonymous users, disallow remote login, remove test database, reload privilege tables`
+`sudo mysql_secure_installation` # Set up root password, remove anonymous users, disallow remote login, remove test database, reload privilege tables
 
 `sudo mariadb -u root` or `mysql -u root -p` #These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
 
@@ -162,7 +162,7 @@ Also check the php version in nextcloud browser UI for an admin user, under `/in
 
 The following is based on [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-[Download nextcloud 25.0.4](https://download.nextcloud.com/server/releases/nextcloud-25.0.4.zip)
+[Download the latest compatible version from nextcloud changelog](https://nextcloud.com/changelog/)
 
 Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against the [respective checksum in the sha256 file](https://nextcloud.com/changelog/) 
 
