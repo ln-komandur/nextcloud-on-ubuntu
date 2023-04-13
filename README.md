@@ -118,7 +118,8 @@ MariaDB [(none)]> exit;
 1. Create a separate partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
 2. Follow the steps in [Create common mount points for partitions shared by all users and include them in fstab](https://github.com/ln-komandur/linux-utils/blob/master/common-mountpoints.md)
 3. `sudo chown www-data:www-data /media/all-users-nextcloud/ -R` #**Assign the ownership of the mount point for the nextcloud server's data partition** to the web-root
-
+   1.  There is no need for other users need to share this partition with the web-root. Therefore, files and directories in this partition need not inherit the group id. So, ensure that the setgid bit is **not** set by listing the permissions of the partition with `ls -l /media/all-users-nextcloud/`
+   1.  In any case, unset the setgid bit with `sudo chmod -R g-s /media/all-users-nextcloud/` # [Unset the setgid bit](https://linuxconfig.org/how-to-use-special-permissions-the-setuid-setgid-and-sticky-bits)
 
 
 ## Install and Enable PHP Modules
