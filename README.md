@@ -77,7 +77,7 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 `sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'`
 
-`sudo add-apt-repository 'deb [arch=amd64] http://mirror.mariadb.org/repo/10.11.2/ubuntu/ jammy main'`
+`sudo add-apt-repository 'deb [arch=amd64] http://mirror.mariadb.org/repo/10.11/ubuntu/ jammy main'`
 
 `sudo apt update` 
 
