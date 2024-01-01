@@ -276,3 +276,9 @@ Do the following to put the nextcloud server back on track.
 3. Disable the 4 services `sudo systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service` so that they can be manually stopped and started by these scripts
 4. In `/etc/fstab` make sure to have `noauto` in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0`. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
 5. Execute [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) with `sudo` credentials as needed
+
+### Add missing indices manually while the instance continues to run
+
+`cd /var/www/nextcloud`
+
+`sudo -u www-data php occ db:add-missing-indices`
