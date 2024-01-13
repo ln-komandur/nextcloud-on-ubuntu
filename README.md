@@ -282,3 +282,10 @@ Do the following to put the nextcloud server back on track.
 `cd /var/www/nextcloud`
 
 `sudo -u www-data php occ db:add-missing-indices`
+
+### Delete older versions of all files for all users while the instance continues to run
+
+`cd /var/www/nextcloud`
+
+`sudo -u www-data php occ versions:cleanup`
+
