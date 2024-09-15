@@ -12,27 +12,27 @@ if (($EUID != 0)); then
   fi
   exit
 fi
-echo "This script stops nextcloud services namely PHP Session Clean timer, PHP8.1fpm, MariaDB, Apache2."
+echo "This script stops nextcloud services namely PHP Session Clean timer, PHP8.3fpm, MariaDB, Apache2."
 echo "It then disables UFW, reports the mount status of the NextCloud Data partition and unmounts it too."
 echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
 #echo
 #echo
 #echo "---------------------------------------------------------------------------------------------------"
-#echo "Status of phpsessionclean.timer, php8.1-fpm.service, mariadb.service, apache2.service"
+#echo "Status of phpsessionclean.timer, php8.3-fpm.service, mariadb.service, apache2.service"
 #echo "---------------------------------------------------------------------------------------------------"
-#systemctl status phpsessionclean.timer php8.1-fpm.service mariadb.service apache2.service
+#systemctl status phpsessionclean.timer php8.3-fpm.service mariadb.service apache2.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Stopping phpsessionclean.timer, php8.1-fpm.service, mariadb.service, apache2.service, ufw.service"
+echo "Stopping phpsessionclean.timer, php8.3-fpm.service, mariadb.service, apache2.service, ufw.service"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl stop phpsessionclean.timer php8.1-fpm.service mariadb.service apache2.service ufw.service
+systemctl stop phpsessionclean.timer php8.3-fpm.service mariadb.service apache2.service ufw.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
-echo "Disable phpsessionclean.timer, php8.1-fpm.service, mariadb.service, apache2.service, ufw.service"
+echo "Disable phpsessionclean.timer, php8.3-fpm.service, mariadb.service, apache2.service, ufw.service"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl disable phpsessionclean.timer php8.1-fpm.service mariadb.service apache2.service ufw.service
+systemctl disable phpsessionclean.timer php8.3-fpm.service mariadb.service apache2.service ufw.service
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
