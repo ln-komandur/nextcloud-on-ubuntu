@@ -121,9 +121,8 @@ Module php8.3 already enabled
 
 `./start-nextcloud.sh #Start the nextcloud server`
 
-Login as admin and check PHP under Administration Settings for the following
+Login as admin and [check PHP under Administration Settings](https://192.168.254.56/nextcloud/index.php/settings/admin/serverinfo) for the following
 
 -   Version: 8.3.11
 -   Memory limit: 512 MB
--   Max execution time: 3600
 -   Upload max size: 2 GB 
