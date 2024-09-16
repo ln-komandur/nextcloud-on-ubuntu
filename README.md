@@ -128,23 +128,21 @@ MariaDB [(none)]> exit;
 
 Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-If upgrading to Nextcloud 30, [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
+For Nextcloud 30, [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
 
+For Nextcloud 25, use the following commands
 
 ---
 
-`sudo apt install php8.1`
+`sudo apt install php8.1 #The default php version in Ubuntu 22.04`
 
-`php -v`
+`php -v #Verify the version`
 
-`sudo apt install imagemagick php-imagick libapache2-mod-php8.1 php8.1-common php8.1-mysql php8.1-fpm php8.1-gd  php8.1-curl php8.1-zip php8.1-xml php8.1-mbstring php8.1-bz2 php8.1-intl php8.1-bcmath php8.1-gmp`
+`sudo apt install imagemagick php-imagick libapache2-mod-php8.1 php8.1-common php8.1-mysql php8.1-fpm php8.1-gd  php8.1-curl php8.1-zip php8.1-xml php8.1-mbstring php8.1-bz2 php8.1-intl php8.1-bcmath php8.1-gmp #Install more php8.1 modules`
 
-`sudo service apache2 restart`
+`sudo a2enmod php8.1 #Enable php8.1 with apache2 to take effect `
 
-
-Enable Apache PHP 8.1 module:
-
-`sudo a2enmod php8.1`
+`sudo service apache2 restart #[Optional step]. Restart apache2 to use php8.1 modules. Also try reloading instead of restarting as an alternative option`
 
 ### Configuring PHP8.1
 
@@ -159,8 +157,11 @@ Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](h
 6. Allow the user to review the server's PHP information in a browser through http://localhost/info.php. _Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)_
 7. Delete the test file after waiting for the user to press the enter key
 
-Also check the php version in nextcloud browser UI for an admin user, under `/index.php/settings/admin/serverinfo`
+Login as admin and [check PHP under Administration Settings](https://192.168.254.56/nextcloud/index.php/settings/admin/serverinfo) for the following
 
+-   Version: 8.1.2
+-   Memory limit: 512 MB
+-   Upload max size: 2 GB 
 ---   
 
 ## Install nextcloud server - Part 1: terminal (command line) activities
