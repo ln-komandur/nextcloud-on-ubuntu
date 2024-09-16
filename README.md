@@ -8,7 +8,7 @@
 4. [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
 5. [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/)
 
-  **Note:** - Though almost all references use Ubuntu 20.04, the procedure has worked perfectly well on Ubuntu 22.04, Lubuntu 20.04 and Raspbian buster as detailed in earlier versions of this write-up. 
+  **Note:** - Though almost all references use Ubuntu 20.04, the procedure has worked **perfectly well on Ubuntu 22.04**, Lubuntu 20.04 and Raspbian buster as detailed in earlier versions of this write-up. 
 
 ---
 
@@ -36,7 +36,9 @@ This write up is based on the actual `history` of commands executed by following
 3. mariadb  Ver 15.1 Distrib 10.11.2-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper - ***mariadb 10.11 is LTS, maintained until Feb 2028***
 4. OpenJDK version "19.0.2" 2023-01-17, JRE build 19.0.2+7-Ubuntu-0ubuntu322.04 - ***the latest as of March 2023***
 5. apache2 Server version: Apache/2.4.52 (Ubuntu), Server built:   2023-01-23T18:34:42 - ***from Ubuntu 22.04 defaults***
-6. PHP 8.1.2-1ubuntu2.11 (cli) (built: Feb 22 2023 22:56:18) (NTS) - ***nextcloud 25 will not run on php8.2 or later. Also php8.1 is from Ubuntu 22.04 defaults***
+6. PHP
+   1. PHP 8.1.2-1ubuntu2.11 (cli) (built: Feb 22 2023 22:56:18) (NTS) - ***[php8.1 is recommended for Nextcloud 25 per the system requirements](https://docs.nextcloud.com/server/25/admin_manual/installation/system_requirements.html), and it is also available from Ubuntu 22.04 defaults. [Nextcloud 25 will not run on php8.2 or later](https://help.nextcloud.com/t/php8-2-with-nextcloud-25-0-2/151769).***
+   2. PHP 8.3.11 (cli) (built: Aug 30 2024 09:27:49) (NTS) - ***[php8.3 is recommended for Nextcloud 30 per the system requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html).***
 
 ---
 
@@ -126,7 +128,7 @@ MariaDB [(none)]> exit;
 
 Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-Refer [Upgrade to php8.3 if running Nextcloud 30](upgrade%20to%20php8.3.md)
+If upgrading to Nextcloud 30, [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
 
 
 ---
