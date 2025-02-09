@@ -294,3 +294,19 @@ Do the following to put the nextcloud server back on track.
 
 `sudo -u www-data php occ versions:cleanup`
 
+# Exposing the nextcloud server outside your LAN through tailscale
+
+1. Create a tailscale account and add your devices to it.
+1. Take a fun name for your tailnet
+1. Connect the device that hosts the nextcloud server to your tailnet and change its name
+1. Generate TLS certificate for the device using the following command
+
+`sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_name-devicename_tailnetname>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_name-devicename_tailnetname>.ts.net.key <device_name>.<tailnet_name>.ts.net # Reference https://tailscale.com/kb/1080/cli`
+
+Edit nextcloud.conf as below
+
+
+Edit config.php for trusted domains as below
+
+
+
