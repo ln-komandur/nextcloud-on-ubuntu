@@ -48,6 +48,7 @@ echo '<VirtualHost *:80>
     ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
     CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
         SSLEngine on
+        # Apache installs with a pair of default encryption certificates: /etc/ssl/certs/ssl-cert-snakeoil.pem and /etc/ssl/private/ssl-cert-snakeoil.key. Refer https://www.linux.com/training-tutorials/apache-ubuntu-linux-beginners-part-2/
         SSLCertificateFile /etc/ssl/certs/ssl-cert-snakeoil.pem
         SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key    
     <Directory /var/www/html/nextcloud/>
