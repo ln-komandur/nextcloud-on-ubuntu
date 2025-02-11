@@ -225,6 +225,63 @@ Log in to the nextcloud server with admin user previlleges and upgrade to nextcl
 
 ## Appendix
 
+### Exposing the nextcloud server outside the LAN with Tailscale VPN
+
+---
+
+1. Create a tailscale account and add devices to it
+1. Take a fun name for the `<tailnet_name>`
+1. Connect the device that hosts the nextcloud server to tailnet and change its name from `computername` to `<NC_server_name>` to avoid exposing the real name
+1. Generate a TLS certificate for the device using the following command. Refer [here on ideas to renew the TLS certificate](https://codingrelic.geekhold.com/2024/11/tailscale-certificates-with-nextcloud.html?m=1)
+
+`sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net # Reference https://tailscale.com/kb/1080/cli`
+
+#### Edit nextcloud.conf and incorporate the DNS entries and TLS certificates in it as below
+
+```
+<VirtualHost *:80>
+    ServerName <NC_server_name>.<tailnet_name>.ts.net
+    ServerAlias computername.local local_ip_address(e.g.192.168.254.56)
+    # Redirects any request to http://<NC_server_name>.<tailnet_name>.ts.net/nextcloud or http://computername.local/nextcloud to https
+    Redirect permanent /nextcloud https://computername.local/nextcloud
+</VirtualHost>
+<VirtualHost *:443>
+    ServerName <NC_server_name>.<tailnet_name>.ts.net
+    ServerAlias computername.local local_ip_address(e.g.192.168.254.56)
+    Alias /nextcloud "/var/www/nextcloud/"
+    ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
+    CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
+        SSLEngine on
+        SSLCertificateFile /etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem
+        SSLCertificateKeyFile /etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key
+```
+
+#### Edit config.php for trusted domains as below
+
+```
+  'trusted_domains' => 
+  array (
+    0 => 'computername.local',
+    1 => 'local_ip_address(e.g.192.168.254.56)',
+    2 => '<NC_server_name>.<tailnet_name>.ts.net',
+  ),
+
+
+  'overwrite.cli.url' => 'https://computername.local/nextcloud',
+  0 => 'https://local_ip_address(e.g.192.168.254.56)/nextcloud',
+  1 => 'https://<NC_server_name>.<tailnet_name>.ts.net/nextcloud',
+
+```
+
+#### Reverse proxy
+
+No tailscale reverse proxy is necessary
+
+#### iOS NextCloud Client App permissions
+
+Ensure that the iOS NextCloud Client App has permissions to use the cellular data
+
+---
 
 ### Unable to access nextcloud server after its IP address changed
 
@@ -298,55 +355,4 @@ Do the following to put the nextcloud server back on track.
 
 `sudo -u www-data php occ versions:cleanup`
 
-# Exposing the nextcloud server outside the LAN with Tailscale VPN
 
-1. Create a tailscale account and add your devices to it.
-1. Take a fun name for your tailnet
-1. Connect the device that hosts the nextcloud server to your tailnet and change its name to `<NC_server_name>`
-1. Generate TLS certificate for the device using the following command. Refer [here on ideas to renew the TLS certificate](https://codingrelic.geekhold.com/2024/11/tailscale-certificates-with-nextcloud.html?m=1)
-
-`sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net # Reference https://tailscale.com/kb/1080/cli`
-
-## Edit nextcloud.conf as below and incorporate the DNS entries and TLS certificates for it
-
-```
-<VirtualHost *:80>
-    ServerName <NC_server_name>.<tailnet_name>.ts.net
-    ServerAlias computername.local local_ip_address(e.g.192.168.254.56)
-    # Redirects any request to http://<NC_server_name>.<tailnet_name>.ts.net/nextcloud or http://computername.local/nextcloud to https
-    Redirect permanent /nextcloud https://computername.local/nextcloud
-</VirtualHost>
-<VirtualHost *:443>
-    ServerName <NC_server_name>.<tailnet_name>.ts.net
-    ServerAlias computername.local local_ip_address(e.g.192.168.254.56)
-    Alias /nextcloud "/var/www/nextcloud/"
-    ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
-    CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
-        SSLEngine on
-        SSLCertificateFile /etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem
-        SSLCertificateKeyFile /etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key
-```
-
-## Edit config.php for trusted domains as below
-```
-  'trusted_domains' => 
-  array (
-    0 => 'computername.local',
-    1 => 'local_ip_address(e.g.192.168.254.56)',
-    2 => '<NC_server_name>.<tailnet_name>.ts.net',
-  ),
-
-
-  'overwrite.cli.url' => 'https://computername.local/nextcloud',
-  0 => 'https://local_ip_address(e.g.192.168.254.56)/nextcloud',
-  1 => 'https://<NC_server_name>.<tailnet_name>.ts.net/nextcloud',
-
-```
-
-## Reverse proxy
-
-No tailscale reverse proxy is necessary
-
-## iOS NextClound App permissions
-
-Ensure that the iOS NextCloud Client App has permissions to use the cellular data
