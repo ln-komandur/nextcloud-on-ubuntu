@@ -7,6 +7,7 @@
 3. [How to install Nextcloud 20 on Ubuntu Server 20.04](https://www.techrepublic.com/article/how-to-install-nextcloud-20-on-ubuntu-server-20-04/)
 4. [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
 5. [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/)
+6. Apache on Ubuntu Linux For Beginners [Part 1](https://www.linux.com/audience/devops/apache-ubuntu-linux-beginners/) and [Part 2 (how to enable SSL on Apache)](https://www.linux.com/training-tutorials/apache-ubuntu-linux-beginners-part-2/)
 
   **Note:** - Though almost all references use Ubuntu 20.04, the procedure has worked **perfectly well on Ubuntu 22.04**, Lubuntu 20.04 and Raspbian buster as detailed in earlier versions of this write-up. 
 
