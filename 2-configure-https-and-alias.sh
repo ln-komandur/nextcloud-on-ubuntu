@@ -47,6 +47,9 @@ echo '<VirtualHost *:80>
     Alias /nextcloud "/var/www/nextcloud/"
     ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
     CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
+        SSLEngine on
+        SSLCertificateFile /etc/ssl/certs/ssl-cert-snakeoil.pem
+        SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key    
     <Directory /var/www/html/nextcloud/>
         Require all granted
         Options FollowSymlinks MultiViews
