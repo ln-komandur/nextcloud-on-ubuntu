@@ -3,7 +3,7 @@
 
 ### Reference [How to Upgrade PHP Version from 8.2 to 8.3 in Ubuntu](https://techvblogs.com/blog/upgrade-php-version-from-8-2-to-8-3-ubuntu)
 
-## Remove php8.1
+## Remove php8.1 if installed
 
 `sudo nala remove php8.1-curl libapache2-mod-php8.1 php-imagick php8.1-bcmath php8.1-bz2 php8.1-common php8.1-fpm php8.1-gd php8.1-gmp php8.1-intl php8.1-mbstring php8.1-mysql php8.1-xml php8.1-zip `
 
@@ -23,10 +23,10 @@
 
 `sudo nala install php8.3 #Install php8.3`
 
-This will additionally and automatically install `libapache2-mod-php8.3 php-common php8.3-cli php8.3-common php8.3-opcache php8.3-readline`. This can be checked by trying to remove php8.3 and aborting it like below
+This will **additionally and automatically install** `libapache2-mod-php8.3 php-common php8.3-cli php8.3-common php8.3-opcache php8.3-readline`. This can be checked by ***trying to remove php8.3***, **BUT ABORTING** it like below
 
 ```
-:~$ sudo nala remove php8.3 #Try to remove php8.3, but abort it
+:~$ sudo nala remove php8.3 #Try to remove php8.3, BUT ABORT it
 ============================================================================================================================================================================================================
  Removing                                                                                                                                                                                                   
 ============================================================================================================================================================================================================
