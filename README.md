@@ -1,4 +1,4 @@
-# ***Manually*** install nextcloud server on Ubuntu 22.04 (64 bit) for limited use within the intranet / home network
+# ***Manually*** install nextcloud server on Ubuntu 22.04 
 ---
 
 ## Useful references - Courtesy credits and Gratitude
@@ -12,8 +12,7 @@
 
 ---
 
-## What is different about this installation?
-Unlike the installations in the above references, the modifications in this installation assume all nextcloud client devices to be in the home intranet, and simplifies the foot print as below
+## What's different about this installation?
 
 1. Files are stored locally on a **separate and dedicated disk partition** on the machine where the nextcloud server is running
 1. There are 2 different approaches described here
@@ -41,9 +40,9 @@ This write up is based on the actual `history` of commands executed by following
 3. mariadb  Ver 15.1 Distrib 10.11.2-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper - ***mariadb 10.11 is LTS, maintained until Feb 2028***
 4. OpenJDK version "19.0.2" 2023-01-17, JRE build 19.0.2+7-Ubuntu-0ubuntu322.04 - ***the latest as of March 2023***
 5. apache2 Server version: Apache/2.4.52 (Ubuntu), Server built:   2023-01-23T18:34:42 - ***from Ubuntu 22.04 defaults***
-6. PHP
-   1. PHP 8.1.2-1ubuntu2.11 (cli) (built: Feb 22 2023 22:56:18) (NTS) - ***[php8.1 is recommended for Nextcloud 25 per the system requirements](https://docs.nextcloud.com/server/25/admin_manual/installation/system_requirements.html), and it is also available from Ubuntu 22.04 defaults. [Nextcloud 25 will not run on php8.2 or later](https://help.nextcloud.com/t/php8-2-with-nextcloud-25-0-2/151769).***
-   2. PHP 8.3.11 (cli) (built: Aug 30 2024 09:27:49) (NTS) - ***[php8.3 is recommended for Nextcloud 30 per the system requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html).***
+6. PHP 8.3.11 (cli) (built: Aug 30 2024 09:27:49) (NTS) - ***[php8.3 is recommended for Nextcloud 30 per the system requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html). php8.1 is available from Ubuntu 22.04 defaults and should be [upgraded to php8.3](upgrade%20to%20php8.3.md)*** 
+
+
 ---
 
 ## Install the LAMP stack
@@ -74,6 +73,8 @@ Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configu
 ### Configure Uncomplicated Firewall (UFW)
 
 **Run [3-configure-ufw.sh](3-configure-ufw.sh)**. It will prompt and authenticate for `sudo` privilege
+
+---
 
 ## Install MariaDB
 
@@ -119,6 +120,8 @@ MariaDB [(none)]> flush privileges;
 MariaDB [(none)]> exit;
 ```
 
+---
+
 ## Prepare the dedicated partition to save nextcloud server's data (user) files 
 
 1. Create a separate partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
@@ -127,6 +130,7 @@ MariaDB [(none)]> exit;
    1.  There is no need for other users need to share this partition with the web-root. Therefore, files and directories in this partition need not inherit the group id. So, ensure that the setgid bit is **not** set by listing the permissions of the partition with `ls -l /media/all-users-nextcloud/`
    1.  In any case, unset the setgid bit with `sudo chmod -R g-s /media/all-users-nextcloud/` # [Unset the setgid bit](https://linuxconfig.org/how-to-use-special-permissions-the-setuid-setgid-and-sticky-bits)
 
+---
 
 ## Install and Enable PHP Modules
 
@@ -134,38 +138,27 @@ Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.
 
 For Nextcloud 30, [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
 
-For Nextcloud 25, use the following commands
+`sudo service apache2 restart #[Optional step]. Restart apache2 to use php modules. Also try `sudo service apache2 reload` instead of restarting as an alternative option`
 
----
-
-`sudo apt install php8.1 #The default php version in Ubuntu 22.04`
-
-`php -v #Verify the version`
-
-`sudo apt install imagemagick php-imagick libapache2-mod-php8.1 php8.1-common php8.1-mysql php8.1-fpm php8.1-gd  php8.1-curl php8.1-zip php8.1-xml php8.1-mbstring php8.1-bz2 php8.1-intl php8.1-bcmath php8.1-gmp #Install more php8.1 modules`
-
-`sudo a2enmod php8.1 #Enable php8.1 with apache2 to take effect `
-
-`sudo service apache2 restart #[Optional step]. Restart apache2 to use php8.1 modules. Also try reloading instead of restarting as an alternative option`
-
-### Configuring PHP8.1
+### Configuring PHP8.x
 
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
 **Run [4-Configure-php-settings.sh](4-Configure-php-settings.sh)** (it will prompt and authenticate for `sudo` privilege) to 
-1. Increase PHP Memory Limit to 512M in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is 128M***
-2. Increase Upload File Size Limit to 2G in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini  in 2 places each ***if it is 2M***
-3. Disable output_buffering in /etc/php/8.1/fpm/php.ini file and /etc/php/8.1/apache2/php.ini ***if it is set to any values (i.e. enabled)***
+1. Increase PHP Memory Limit to 512M in `/etc/php/8.x/fpm/php.ini` file and `/etc/php/8.x/apache2/php.ini` ***if it is 128M***
+2. Increase Upload File Size Limit to 2G in `/etc/php/8.x/fpm/php.ini` file and `/etc/php/8.x/apache2/php.ini`  in 2 places each ***if it is 2M***
+3. Disable output_buffering in `/etc/php/8.x/fpm/php.ini` file and `/etc/php/8.x/apache2/php.ini` ***if it is set to any values (i.e. enabled)***
 4. Restart apache
-5. Create a test file (/var/www/html/info.php) to review the server's PHP information  
+5. Create a test file (`/var/www/html/info.php`) to review the server's PHP information  
 6. Allow the user to review the server's PHP information in a browser through http://localhost/info.php. _Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)_
 7. Delete the test file after waiting for the user to press the enter key
 
 Login as admin and [check PHP under Administration Settings](https://192.168.254.56/nextcloud/index.php/settings/admin/serverinfo) for the following
 
--   Version: 8.1.2
+-   Version: 8.x.y
 -   Memory limit: 512 MB
 -   Upload max size: 2 GB 
+
 ---   
 
 ## Install nextcloud server - Part 1: terminal (command line) activities
@@ -182,16 +175,15 @@ Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against
 
 `sudo systemctl reload apache2` # Reload (or restart if needed) apache before completing the installation through the web browser.
 
+---
+
 ## Install the nextcloud server - Part 2: Complete the installation in a Browser
 ...by accessing https://192.168.254.56/nextcloud/
 1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
-
 2. Create an admin user account (and the first user account) for the nextcloud server
-
 3. Give the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also enter the new username and password for the nextcloud database. **Note:** The browser WILL show errors because of trusted domains as 
       1. apache is already configured to redirect `ServerName 192.168.254.56` to `ServerAlias computername.local` http to https
       2. config.php is created only in this step and does not have `192.168.254.56` and `computername.local` listed as trusted_domains yet
-
 3. **Fix:** Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following to have both the IP address `192.168.254.56` and alias `computername.local`
       1. trusted domains
          ```
@@ -211,11 +203,7 @@ Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against
          The above helps to use the server url as `https://computername.local/nextcloud` from Linux laptops and iOS devices on the intranet if `avahi-daemon.service` is running on the server. Since Android devices do support mDNS (Refer [...local hostname doesn't work on Android phones](https://Gaveerrypi.stackexchange.com/questions/91154/raspberry-pis-local-hostname-doesnt-work-on-android-phones) ), the URL based on the IP address must also be given to use on those devices.
 4. Restart apache `sudo systemctl restart apache2`         
 
----
-
 ### The nextcloud installation is now complete
-
----
 
 ### Post installation upgrades
 
