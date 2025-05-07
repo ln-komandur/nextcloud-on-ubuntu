@@ -63,6 +63,16 @@ echo "--------------------------------------------------------------------------
 echo "Starting ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer"
 echo "---------------------------------------------------------------------------------------------------"
 systemctl start ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer   
+
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
+echo "Renewing tailscale TLS certificate if due"
+echo "---------------------------------------------------------------------------------------------------"
+if tailscale up; then # If tailscale is installed and can be brought up, then
+    echo "Customize your tailscale cert command with your certificate locations and machine names to renew your TLS certificate"
+    echo "tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net # Reference https://tailscale.com/kb/1080/cli"
+fi
 echo
 echo
 echo "Exit"
