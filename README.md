@@ -221,7 +221,7 @@ Log in to the nextcloud server with admin user previlleges and upgrade to nextcl
 1. Create a tailscale account and add devices to it
 1. Take a fun name for the `<tailnet_name>`
 1. Connect the device that hosts the nextcloud server to tailnet and change its name from `computername` to `<NC_server_name>` to avoid exposing the real name
-1. Generate a TLS certificate for the device using the following command. Refer [here on ideas to renew the TLS certificate](https://codingrelic.geekhold.com/2024/11/tailscale-certificates-with-nextcloud.html?m=1)
+1. Generate a TLS certificate for the device using the following command. Refer [here on ideas to renew the TLS certificate](https://codingrelic.geekhold.com/2024/11/tailscale-certificates-with-nextcloud.html?m=1) . **Use the same command to renew it as well**
 
 `sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net` # Reference https://tailscale.com/kb/1080/cli
 
