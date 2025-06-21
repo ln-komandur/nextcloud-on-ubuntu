@@ -127,9 +127,9 @@ MariaDB [(none)]> exit;
 
 1. Create a separate partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
 2. Follow the steps in [Create common mount points for partitions shared by all users and include them in fstab](https://github.com/ln-komandur/linux-utils/blob/master/common-mountpoints.md)
-3. `sudo chown www-data:www-data /media/all-users-nextcloud/ -R` #**Assign the ownership of the mount point for the nextcloud server's data partition** to the web-root
-   1.  There is no need for other users need to share this partition with the web-root. Therefore, files and directories in this partition need not inherit the group id. So, ensure that the setgid bit is **not** set by listing the permissions of the partition with `ls -l /media/all-users-nextcloud/`
-   1.  In any case, unset the setgid bit with `sudo chmod -R g-s /media/all-users-nextcloud/` # [Unset the setgid bit](https://linuxconfig.org/how-to-use-special-permissions-the-setuid-setgid-and-sticky-bits)
+3. `sudo chown www-data:www-data /media/all-users-nextcloud-data/ -R` #**Assign the ownership of the mount point for the nextcloud server's data partition** to the web-root
+   1.  There is no need for other users need to share this partition with the web-root. Therefore, files and directories in this partition need not inherit the group id. So, ensure that the setgid bit is **not** set by listing the permissions of the partition with `ls -l /media/all-users-nextcloud-data/`
+   1.  In any case, unset the setgid bit with `sudo chmod -R g-s /media/all-users-nextcloud-data/` # [Unset the setgid bit](https://linuxconfig.org/how-to-use-special-permissions-the-setuid-setgid-and-sticky-bits)
 
 ---
 
@@ -153,6 +153,8 @@ Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](h
 5. Create a test file (`/var/www/html/info.php`) to review the server's PHP information  
 6. Allow the user to review the server's PHP information in a browser through http://localhost/info.php. _Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)_
 7. Delete the test file after waiting for the user to press the enter key
+8. `sudo systemctl restart apache2` # Reload (or restart if needed)
+
 
 Login as admin and [check PHP under Administration Settings](https://192.168.254.56/nextcloud/index.php/settings/admin/serverinfo) for the following
 
@@ -182,7 +184,7 @@ Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against
 ...by accessing https://192.168.254.56/nextcloud/
 1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
 2. Create an admin user account (and the first user account) for the nextcloud server
-3. Give the path to the data folder as /media/all-users-nextcloud-data/ along with credentials for mariaDB, and also enter the new username and password for the nextcloud database. **Note:** The browser WILL show errors because of trusted domains as 
+3. Give the path to the data folder as `/media/all-users-nextcloud-data/` along with credentials for mariaDB, and also enter the new username and password for the nextcloud database. **Note:** The browser WILL show errors because of trusted domains as 
       1. apache is already configured to redirect `ServerName 192.168.254.56` to `ServerAlias computername.local` http to https
       2. config.php is created only in this step and does not have `192.168.254.56` and `computername.local` listed as trusted_domains yet
 3. **Fix:** Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following to have both the IP address `192.168.254.56` and alias `computername.local`
@@ -343,5 +345,13 @@ Do the following to put the nextcloud server back on track.
 `cd /var/www/nextcloud`
 
 `sudo -u www-data php occ versions:cleanup`
+
+### Add user via occ command
+
+`cd /var/www/nextcloud`
+
+`sudo -E -u www-data php occ user:add --display-name="FNU LNU" --group="group-A" --group="group-B" username` # Create a user and assign them group-A and group-B. This will prompt for password, but not email
+
+Refer [the nextcloud admin manual](https://docs.nextcloud.com/server/latest/admin_manual/occ_command.html) for more occ commands
 
 
