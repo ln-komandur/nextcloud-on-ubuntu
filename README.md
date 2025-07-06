@@ -230,7 +230,7 @@ Log in to the nextcloud server with admin user previlleges and upgrade to nextcl
 #### Alternatively create a systemd service which would automatically take care of renewing it too
 
 ```
-sudo tee -a /lib/systemd/system/ask_tailscale_to_renew_TLS_certs.service <EOF
+sudo tee /lib/systemd/system/ask_tailscale_to_renew_TLS_certs.service <<EOF
 [Unit]
 Description=Ask tailscale to renew TLS certificates whenever the computer is started / re-started. Tailscale renews it if due per their policies. Reference https://tailscale.com/kb/1080/cli
 Requires=tailscaled.service
@@ -250,11 +250,11 @@ WantedBy=multi-user.target
 EOF
 ```
 
-`sudo systemctl daemon-reload` # **Reload the systemctl daemon to read the new file, and each time after making any changes in .service file**
+`sudo systemctl daemon-reload` # **Reload the systemctl daemon to read the new file, and each time after making any changes to the .service file**
 
-`sudo systemctl restart ask_tailscale_to_renew_TLS_certs.service` # **Start the systemd service**
+`sudo systemctl restart ask_tailscale_to_renew_TLS_certs.service` # **Restart (Start is not already running) the ask_tailscale_to_renew_TLS_certs systemd service**
 
-`sudo systemctl status ask_tailscale_to_renew_TLS_certs.service` # **Verify that the systemd service is up and running**
+`sudo systemctl status ask_tailscale_to_renew_TLS_certs.service` # **Verify that the ask_tailscale_to_renew_TLS_certs systemd service is up and running**
 
 #### Edit nextcloud.conf and incorporate the DNS entries and TLS certificates in it as below
 
