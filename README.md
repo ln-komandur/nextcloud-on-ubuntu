@@ -227,6 +227,35 @@ Log in to the nextcloud server with admin user previlleges and upgrade to nextcl
 
 `sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net` # Reference https://tailscale.com/kb/1080/cli
 
+#### Alternatively create a systemd service which would automatically take care of renewing it too
+
+```
+sudo tee -a /lib/systemd/system/ask_tailscale_to_renew_TLS_certs.service <EOF
+[Unit]
+Description=Ask tailscale to renew TLS certificates whenever the computer is started / re-started. Tailscale renews it if due per their policies. Reference https://tailscale.com/kb/1080/cli
+Requires=tailscaled.service
+After=tailscaled.service
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+ExecStartPre=/bin/bash -c 'echo $(date)'
+ExecStart=/usr/bin/tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net
+StandardOutput=append:/var/log/apache2/tailscale_TLS_cert_renewal_service.log
+StandardError=append:/var/log/apache2/tailscale_TLS_cert_renewal_service.error
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+`sudo systemctl daemon-reload` # **Reload the systemctl daemon to read the new file, and each time after making any changes in .service file**
+
+`sudo systemctl restart ask_tailscale_to_renew_TLS_certs.service` # **Start the systemd service**
+
+`sudo systemctl status ask_tailscale_to_renew_TLS_certs.service` # **Verify that the systemd service is up and running**
+
 #### Edit nextcloud.conf and incorporate the DNS entries and TLS certificates in it as below
 
 ```
@@ -350,7 +379,7 @@ Do the following to put the nextcloud server back on track.
 
 `cd /var/www/nextcloud`
 
-`sudo -E -u www-data php occ user:add --display-name="FNU LNU" --group="group-A" --group="group-B" username` # Create a user and assign them group-A and group-B. This will prompt for password, but not email
+`sudo -E -u www-data php occ user:add --display-name="FNU LNU" --group="group-A" --group="group-B" username` # Create a user and assign them group-A and group-B. This will prompt for password, but not email. However, upon first login, this approach will still ask for the password to be reset through the link it has sent to the (non-existent) email. Ignore the message and login again.
 
 Refer [the nextcloud admin manual](https://docs.nextcloud.com/server/latest/admin_manual/occ_command.html) for more occ commands
 
