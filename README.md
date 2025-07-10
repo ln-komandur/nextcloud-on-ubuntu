@@ -137,7 +137,7 @@ MariaDB [(none)]> exit;
 
 Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-For Nextcloud 30, [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
+For Nextcloud 30 or above, [install php8.3 or upgrade to it](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
 
 `sudo service apache2 restart #[Optional step]. Restart apache2 to use php modules. Also try `sudo service apache2 reload` instead of restarting as an alternative option`
 
