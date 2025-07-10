@@ -7,11 +7,13 @@
 
 ## Installing the Desktop client per link 2 above
 
-```
-sudo add-apt-repository ppa:nextcloud-devs/client
-sudo apt update
-sudo nala install nextcloud-desktop
-```
+`sudo add-apt-repository ppa:nextcloud-devs/client` # **Add the nextcloud client PPA**
+
+`sudo apt update` # **Update apt**
+
+`sudo nala install nextcloud-desktop` # **Install the plain nextcloud desktop client**
+
+`sudo nala install nautilus-nextcloud` # **OR Alternatively install the nautilus nextcloud desktop client**
 
 ### Stop security key (gpg file) cross signing
 
