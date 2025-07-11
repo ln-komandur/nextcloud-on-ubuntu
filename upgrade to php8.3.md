@@ -1,4 +1,4 @@
-# Install php8.3 for nextcloud server installation, and remove php8.1 if installed
+# Remove php8.1 if installed, and Install php8.3 packages for nextcloud server installation
 
 
 ### Reference [How to Upgrade PHP Version from 8.2 to 8.3 in Ubuntu](https://techvblogs.com/blog/upgrade-php-version-from-8-2-to-8-3-ubuntu)
