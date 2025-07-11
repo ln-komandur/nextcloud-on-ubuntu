@@ -123,7 +123,9 @@ Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.
 
 For Nextcloud 30 or above, **Run [4-install-php8_3.sh](4-install-php8_3.sh)**. It will prompt and authenticate for `sudo` privilege. Or [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
 
-`sudo service apache2 restart #[Optional step]. Restart apache2 to use php modules. Also try `sudo service apache2 reload` instead of restarting as an alternative option`
+`sudo service apache2 restart` # [Optional step]. Restart apache2 to use php modules. 
+
+Also try `sudo service apache2 reload` # Reload apache instead of restarting as an alternative option`
 
 ### Configuring PHP8.x
 
