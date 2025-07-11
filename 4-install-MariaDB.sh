@@ -32,8 +32,8 @@ apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
 
 echo
 echo
-echo "Add the repo for mariadb 10.11"
-echo "##############################################################"
+echo "Add the repo for mariadb 10.11 for Ubuntu 22.04 Jammy Jellyfish release"
+echo "########################################################################"
 echo
 add-apt-repository 'deb [arch=amd64] http://mirror.mariadb.org/repo/10.11/ubuntu/ jammy main'
 
