@@ -79,27 +79,11 @@ Refer [Configure to redirect to HTTPS site](https://help.nextcloud.com/t/configu
 
 ## Install MariaDB
 
-Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/) for screenshots
-
-`sudo apt install software-properties-common`
-
-`sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'`
-
-`sudo add-apt-repository 'deb [arch=amd64] http://mirror.mariadb.org/repo/10.11/ubuntu/ jammy main'`
-
-`sudo apt update` 
-
-`sudo apt install mariadb-server mariadb-client` 
-
-`mariadb --version` or `mysql --version` #Verify if the version intended is installed
-
-### Configure Mariadb
-
 Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/) or [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop) for screenshots
 
-`systemctl status mariadb`
+**Run [4-install-MariaDB.sh](4-install-MariaDB.sh)** to install and start mariadb for configuring it. It will prompt and authenticate for `sudo` privilege
 
-`sudo systemctl start mariadb`
+### Configure Mariadb
 
 `sudo mysql_secure_installation` # Set up root password, remove anonymous users, disallow remote login, remove test database, reload privilege tables
 
@@ -137,7 +121,7 @@ MariaDB [(none)]> exit;
 
 Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-For Nextcloud 30 or above, [install php8.3 or upgrade to it](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
+For Nextcloud 30 or above, **Run [4-install-php8_3.sh](4-install-php8_3.sh)**. It will prompt and authenticate for `sudo` privilege. Or [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
 
 `sudo service apache2 restart #[Optional step]. Restart apache2 to use php modules. Also try `sudo service apache2 reload` instead of restarting as an alternative option`
 
