@@ -9,21 +9,12 @@
 
 `dpkg-query -l | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge #Remove php8.1 config files if they are marked "rc"`
 
-## Add php8.3 repo
-
-`sudo nala install software-properties-common #May have already been installed`
-
-`sudo add-apt-repository ppa:ondrej/php #Add the repo for php8.3`
-
-`sudo apt-get update #Update repos`
-
 ## Install php8.3 and modules
 
-`sudo nala install imagemagick #May have already been installed`
+Use the [script to install php8.3](4-install-php8_3.sh)
 
-`sudo nala install php8.3 #Install php8.3`
-
-This will **additionally and automatically install** `libapache2-mod-php8.3 php-common php8.3-cli php8.3-common php8.3-opcache php8.3-readline`. This can be checked by ***trying to remove php8.3***, **BUT ABORTING** it like below
+### Sample outputs for some commands are as below. 
+***Checking if libapache2-mod-php8.3 php-common php8.3-cli php8.3-common php8.3-opcache php8.3-readline are installed by trying to remove php8.3, BUT ABORTING it***
 
 ```
 :~$ sudo nala remove php8.3 #Try to remove php8.3, BUT ABORT it
@@ -57,13 +48,11 @@ Abort.
 
 ```
 
-## Install more 8.3 modules
-
-`sudo nala install php8.3-curl  php8.3-imagick  php8.3-mbstring  php8.3-mysql  php8.3-xml  php8.3-zip php8.3-bcmath php8.3-bz2 php8.3-fpm php8.3-gd php8.3-gmp php8.3-intl #Install more 8.3 modules`
-
-The following notices may be of interest, especially that apache2 is enabled for php8.3
+***Notices that may be of interest when installing more php8.3 modules***, especially that apache2 is enabled for php8.3
 
 ```
+:~$ sudo nala install php8.3-curl  php8.3-imagick  php8.3-mbstring  php8.3-mysql  php8.3-xml  php8.3-zip php8.3-bcmath php8.3-bz2 php8.3-fpm php8.3-gd php8.3-gmp php8.3-intl #Install more 8.3 modules
+
 Notices:
   Notice: Not enabling PHP 8.3 FPM by default.
   Notice: To enable PHP 8.3 FPM in Apache2 do:
@@ -74,9 +63,8 @@ Finished Successfully
 
 ```
 
-`php -v #Check the current version of php enabled from amongst alternatives if any`
+***php version currently enabled from amongst alternatives if any***
 
-Sample output
 ```
 :~$ php -v #Check the current version of php enabled from amongst alternatives if any
 PHP 8.3.11 (cli) (built: Aug 30 2024 09:27:49) (NTS)
@@ -85,9 +73,8 @@ Zend Engine v4.3.11, Copyright (c) Zend Technologies
     with Zend OPcache v8.3.11, Copyright (c), by Zend Technologies
 ```
 
-`sudo update-alternatives --config php #Check that there are no php alternatives`
+***Updating php alternatives***
 
-Sample output
 ```
 :~$ sudo update-alternatives --config php #Check that there are no php alternatives 
 There is only one alternative in link group php (providing /usr/bin/php): /usr/bin/php8.3
@@ -95,11 +82,8 @@ Nothing to configure.
 
 ```
 
-## Update configurations to php8.3
+***Updating apache configurations to php8.3***
 
-`sudo a2enmod php8.3 #Enable php8.3 for apache. This may already be true`
-
-Sample output
 ```
 :~$ sudo a2enmod php8.3 #Enable php8.3 for apache. This may already be true
 Considering dependency mpm_prefork for php8.3:
@@ -108,21 +92,10 @@ Considering conflict mpm_worker for mpm_prefork:
 Module mpm_prefork already enabled
 Considering conflict php5 for php8.3:
 Module php8.3 already enabled
-
 ```
 
-`sudo nano 4-Configure-php-settings.sh #Update folder names to php8.3. i.e. Globally find and replace 8.1 to 8.3`
+## Globally find and replace 8.1 to 8.3 in custom scripts
 
-`./4-Configure-php-settings.sh #Update php8.3 configurations`
-
-`sudo nano start-nextcloud.sh #Update to php8.3. i.e. Globally find and replace 8.1 to 8.3`
-
-`sudo nano stop-nextcloud.sh  #Update to php8.3. i.e. Globally find and replace 8.1 to 8.3`
-
-`./start-nextcloud.sh #Start the nextcloud server`
-
-Login as admin and [check PHP under Administration Settings](https://192.168.254.56/nextcloud/index.php/settings/admin/serverinfo) for the following
-
--   Version: 8.3.11
--   Memory limit: 512 MB
--   Upload max size: 2 GB 
+1. `4-Configure-php-settings.sh` # Update folder names to php8.3
+2. `start-nextcloud.sh` # Update names of services to reflect php8.3
+3. `stop-nextcloud.sh`  # Update names of services to reflect  php8.3
