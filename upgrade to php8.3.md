@@ -5,9 +5,9 @@
 
 ## Remove php8.1 if installed
 
-`sudo nala remove php8.1-curl libapache2-mod-php8.1 php-imagick php8.1-bcmath php8.1-bz2 php8.1-common php8.1-fpm php8.1-gd php8.1-gmp php8.1-intl php8.1-mbstring php8.1-mysql php8.1-xml php8.1-zip `
+`sudo nala remove php8.1-curl libapache2-mod-php8.1 php-imagick php8.1-bcmath php8.1-bz2 php8.1-common php8.1-fpm php8.1-gd php8.1-gmp php8.1-intl php8.1-mbstring php8.1-mysql php8.1-xml php8.1-zip` # Remove php8.1 and modules
 
-`dpkg-query -l | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge #Remove php8.1 config files if they are marked "rc"`
+`dpkg-query -l | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge` # Remove php8.1 config files if they are marked "rc"
 
 ## Install php8.3 and modules
 
