@@ -11,7 +11,7 @@
 
 ## Install php8.3 and modules
 
-Use the [script to install php8.3](4-install-php8_3.sh)
+Run the [5-install-php8_3.sh](5-install-php8_3.sh). It will prompt and authenticate for `sudo` privilege
 
 ### Sample outputs for some commands are as below. 
 ***Checking if libapache2-mod-php8.3 php-common php8.3-cli php8.3-common php8.3-opcache php8.3-readline are installed by trying to remove php8.3, BUT ABORTING it***
@@ -96,6 +96,6 @@ Module php8.3 already enabled
 
 ## Globally find and replace 8.1 to 8.3 in custom scripts
 
-1. `4-Configure-php-settings.sh` # Update folder names to php8.3
-2. `start-nextcloud.sh` # Update names of services to reflect php8.3
-3. `stop-nextcloud.sh`  # Update names of services to reflect  php8.3
+1. [`6-Configure-php-settings.sh`](6-Configure-php-settings.sh) # Update folder names to php8.3
+2. [`start-nextcloud.sh`](start-nextcloud.sh) # Update names of services to reflect php8.3
+3. [`stop-nextcloud.sh`](start-nextcloud.sh)  # Update names of services to reflect  php8.3
