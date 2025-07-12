@@ -121,7 +121,7 @@ MariaDB [(none)]> exit;
 
 Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack)
 
-For Nextcloud 30 or above, **Run [4-install-php8_3.sh](4-install-php8_3.sh)**. It will prompt and authenticate for `sudo` privilege. Or [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
+For Nextcloud 30 or above, **Run [5-install-php8_3.sh](5-install-php8_3.sh)**. It will prompt and authenticate for `sudo` privilege. Or [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
 
 `sudo service apache2 restart` # [Optional step]. Restart apache2 to use php modules. 
 
@@ -131,7 +131,7 @@ Also try `sudo service apache2 reload` # Reload apache instead of restarting as 
 
 Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/big_file_upload_configuration.html?highlight=big%20files#configuring-php) 
 
-**Run [4-Configure-php-settings.sh](4-Configure-php-settings.sh)** (it will prompt and authenticate for `sudo` privilege) to 
+**Run [6-Configure-php-settings.sh](6-Configure-php-settings.sh)** (it will prompt and authenticate for `sudo` privilege) to 
 1. Increase PHP Memory Limit to 512M in `/etc/php/8.x/fpm/php.ini` file and `/etc/php/8.x/apache2/php.ini` ***if it is 128M***
 2. Increase Upload File Size Limit to 2G in `/etc/php/8.x/fpm/php.ini` file and `/etc/php/8.x/apache2/php.ini`  in 2 places each ***if it is 2M***
 3. Disable output_buffering in `/etc/php/8.x/fpm/php.ini` file and `/etc/php/8.x/apache2/php.ini` ***if it is set to any values (i.e. enabled)***
