@@ -81,4 +81,6 @@ echo "##############################################################"
 echo
 a2enmod php8.3 #Enable php8.3 for apache. This may already be true
 
+echo
+echo "Exiting"
 exit
