@@ -72,4 +72,6 @@ echo "##########################################################################
 echo
 systemctl status mariadb # Start MariaDB to configure it
 
+echo
+echo "Exiting"
 exit
