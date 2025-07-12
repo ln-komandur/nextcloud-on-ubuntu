@@ -215,7 +215,7 @@ Log in to the nextcloud server with admin user previlleges and upgrade to nextcl
 1. Connect the device that hosts the nextcloud server to tailnet and change its name from `computername` to `<NC_server_name>` to avoid exposing the real name
 1. Generate a TLS certificate for the device using the following command. Refer [here on ideas to renew the TLS certificate](https://codingrelic.geekhold.com/2024/11/tailscale-certificates-with-nextcloud.html?m=1) . **Use the same command to renew it as well**
 
-`sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net` # *Reference https://tailscale.com/kb/1080/cli*
+`sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net` # *Reference https://tailscale.com/kb/1080/cli*
 
 #### Alternatively create a systemd service which would automatically take care of renewing it too
 
@@ -231,7 +231,7 @@ Type=oneshot
 User=root
 Group=root
 ExecStartPre=/bin/bash -c 'echo $(date)'
-ExecStart=/usr/bin/tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net
+ExecStart=/usr/bin/tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net
 StandardOutput=append:/var/log/apache2/tailscale_TLS_cert_renewal_service.log
 StandardError=append:/var/log/apache2/tailscale_TLS_cert_renewal_service.error
 
@@ -250,20 +250,20 @@ EOF
 
 ```
 <VirtualHost *:80>
-    ServerName <NC_server_name>.<tailnet_name>.ts.net
+    ServerName <NextCloudServerTailscaleName>.<TailnetName>.ts.net
     ServerAlias computername.local local_ip_address(e.g.192.168.254.56)
-    # Redirects any request to http://<NC_server_name>.<tailnet_name>.ts.net/nextcloud or http://computername.local/nextcloud to https
+    # Redirects any request to http://<NextCloudServerTailscaleName>.<TailnetName>.ts.net/nextcloud or http://computername.local/nextcloud to https
     Redirect permanent /nextcloud https://computername.local/nextcloud
 </VirtualHost>
 <VirtualHost *:443>
-    ServerName <NC_server_name>.<tailnet_name>.ts.net
+    ServerName <NextCloudServerTailscaleName>.<TailnetName>.ts.net
     ServerAlias computername.local local_ip_address(e.g.192.168.254.56)
     Alias /nextcloud "/var/www/nextcloud/"
     ErrorLog ${APACHE_LOG_DIR}/nextcloud.error
     CustomLog ${APACHE_LOG_DIR}/nextcloud.access combined
         SSLEngine on
-        SSLCertificateFile /etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem
-        SSLCertificateKeyFile /etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key
+        SSLCertificateFile /etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem
+        SSLCertificateKeyFile /etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key
 ```
 
 #### Edit config.php for trusted domains as below
@@ -273,13 +273,13 @@ EOF
   array (
     0 => 'computername.local',
     1 => 'local_ip_address(e.g.192.168.254.56)',
-    2 => '<NC_server_name>.<tailnet_name>.ts.net',
+    2 => '<NextCloudServerTailscaleName>.<TailnetName>.ts.net',
   ),
 
 
   'overwrite.cli.url' => 'https://computername.local/nextcloud',
   0 => 'https://local_ip_address(e.g.192.168.254.56)/nextcloud',
-  1 => 'https://<NC_server_name>.<tailnet_name>.ts.net/nextcloud',
+  1 => 'https://<NextCloudServerTailscaleName>.<TailnetName>.ts.net/nextcloud',
 
 ```
 
@@ -345,18 +345,23 @@ Do the following to put the nextcloud server back on track.
       4. `sudo ufw allow in from 192.168.0.1 to 224.0.0.0/24`
 8. Remove the old `ufw` rules as appropriate after executing `sudo ufw status numbered` and deleting numbered rules with `sudo ufw delete #` (replace # with the rule number)
 
-### Manually stop and start nextcloud server (Avoiding autostarts to speed up boot-up)
+### Manually stop and start nextcloud server
 
-1. Download [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) to super user's home directory
-2. Give execute permissions to both scrips with `chmod +x <script-name.sh>`
-3. Disable the 4 services `sudo systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service` so that they can be manually stopped and started by these scripts
-4. In `/etc/fstab` make sure to have **`noauto`** in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` for it to be mounted manually. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
-5. Execute [start-nextcloud.sh](start-nextcloud.sh) and [stop-nextcloud.sh](stop-nextcloud.sh) with `sudo` credentials as needed
+Use this method to avoid autostarts on older hardware to speed up boot-up
 
-### Automatically start nextcloud server (Avoids the need for any user to login)
-1.  [Take care of trying to renew the Tailscale TLS certificate automatically](#alternatively-create-a-systemd-service-which-would-automatically-take-care-of-renewing-it-too)
-2.  `sudo systemctl enable ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer` # *Enable services to run automatically*
-3.  In `/etc/fstab` make sure to have **`auto`** in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>auto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` so that it is mounted automatically. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
+1. `sudo systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service` # *Disable these 4 services so that they can be manually stopped and started by scripts*
+2. In `/etc/fstab` make sure to have **`noauto`** in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` for it to be mounted manually. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
+3. Download [start-nextcloud.sh](start-nextcloud.sh) (which also tries to renew the Tailscale TLS certificate everytime) and [stop-nextcloud.sh](stop-nextcloud.sh) to super user's home directory. 
+4. `chmod +x <script-name.sh>` # *Give execute permissions to both scrips*
+5. `sudo [start-nextcloud.sh](start-nextcloud.sh)` # *Start the server manually* and `sudo [stop-nextcloud.sh](stop-nextcloud.sh)` # *Stop the server manually* as needed
+
+### Automatically start nextcloud server
+
+Use this method to avoid the need for any user to login
+
+1.  `sudo systemctl enable ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer` # *Enable services to start automatically*
+2.  In `/etc/fstab` make sure to have **`auto`** in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>auto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` so that it is mounted automatically. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
+3.  [Use a service to automatically try and renew the Tailscale TLS certificate on boot](#alternatively-create-a-systemd-service-which-would-automatically-take-care-of-renewing-it-too)
 
 
 ### Add missing indices manually while the instance continues to run
