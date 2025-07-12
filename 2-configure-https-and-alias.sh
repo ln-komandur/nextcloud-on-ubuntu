@@ -89,4 +89,5 @@ echo "Step C : Restarting apache2"
 echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 systemctl restart apache2 # Restart apache2
 
+echo "Exiting"
 exit
