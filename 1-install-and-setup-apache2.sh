@@ -106,4 +106,6 @@ echo "Reloading apache2"
 echo "-----------------"
 echo
 systemctl reload apache2
+
+echo "Exiting"
 exit
