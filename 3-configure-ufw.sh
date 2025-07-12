@@ -50,4 +50,6 @@ echo
 echo "Refreshing UFW "
 ufw disable && ufw enable && ufw status # Refresh UFW 
 
+echo
+echo "Exiting"
 exit
