@@ -52,7 +52,7 @@ Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.lin
 
 ### Install Apache and do basic set-up
 
-`sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade`
+`sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade` # *update and upgrade apt repos*
 
 **Run [1-install-and-setup-apache2.sh](1-install-and-setup-apache2.sh)**. It will prompt and authenticate for `sudo` privilege 
 
@@ -85,15 +85,19 @@ Refer [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://comput
 
 ### Configure Mariadb
 
-`sudo mysql_secure_installation` # Set up root password, remove anonymous users, disallow remote login, remove test database, reload privilege tables
+`sudo mysql_secure_installation` # *Set up root password, remove anonymous users, disallow remote login, remove test database, reload privilege tables*
 
-`sudo mariadb -u root` or `mysql -u root -p` #These are just to test. The second command will prompt for mariadb root password you just set-up. Type exit at "MariaDB [(none)]>" prompt
+`sudo mariadb -u root` # *Just to test*
 
-### Create nextcloud user account (username and password) on mysql DB
+or 
+
+`mysql -u root -p` # *Just to test. Will prompt for mariadb root password you just set-up. Type exit at `MariaDB [(none)]>` prompt*
+
+### Create nextcloud user account (database, username and password) on mysql DB
 
 Refer [Install NextCloud on Ubuntu 20.04 with Apache (LAMP Stack)](https://www.linuxbabe.com/ubuntu/install-nextcloud-ubuntu-20-04-apache-lamp-stack) for screenshots
 
-`sudo mysql` 
+`sudo mysql` # *To create nextcloud user account (database, its user and password) on mysql DB*
 
 **Use *YOUR* custom values below**
 
@@ -111,9 +115,9 @@ MariaDB [(none)]> exit;
 
 1. Create a separate partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
 2. Follow the steps in [Create common mount points for partitions shared by all users and include them in fstab](https://github.com/ln-komandur/linux-utils/blob/master/common-mountpoints.md)
-3. `sudo chown www-data:www-data /media/all-users-nextcloud-data/ -R` #**Assign the ownership of the mount point for the nextcloud server's data partition** to the web-root
-   1.  There is no need for other users need to share this partition with the web-root. Therefore, files and directories in this partition need not inherit the group id. So, ensure that the setgid bit is **not** set by listing the permissions of the partition with `ls -l /media/all-users-nextcloud-data/`
-   1.  In any case, unset the setgid bit with `sudo chmod -R g-s /media/all-users-nextcloud-data/` # [Unset the setgid bit](https://linuxconfig.org/how-to-use-special-permissions-the-setuid-setgid-and-sticky-bits)
+3. `sudo chown www-data:www-data /media/all-users-nextcloud-data/ -R` # *Assign the ownership of the mount point for the nextcloud server's data partition* to the web-root
+   1.  There is no need for other users need to share this partition with the web-root. Therefore, files and directories in this partition need not inherit the group id. So, ensure that the setgid bit is **not** set `ls -l /media/all-users-nextcloud-data/` # *list the permissions of the partition*
+   1.  In any case, unset the setgid bit with `sudo chmod -R g-s /media/all-users-nextcloud-data/` # *[Unset the setgid bit](https://linuxconfig.org/how-to-use-special-permissions-the-setuid-setgid-and-sticky-bits)*
 
 ---
 
@@ -123,9 +127,9 @@ Refer Step 4: Install and Enable PHP Modules in [Install NextCloud on Ubuntu 20.
 
 For Nextcloud 30 or above, **Run [5-install-php8_3.sh](5-install-php8_3.sh)**. It will prompt and authenticate for `sudo` privilege. Or [upgrade to php8.3](upgrade%20to%20php8.3.md) as it is recommended per the [System requirements](https://docs.nextcloud.com/server/30/admin_manual/installation/system_requirements.html)
 
-`sudo service apache2 restart` # [Optional step]. Restart apache2 to use php modules. 
+`sudo service apache2 restart` # *[Optional step]. Restart apache2 to use php modules*
 
-Also try `sudo service apache2 reload` # Reload apache instead of restarting as an alternative option`
+Also try `sudo service apache2 reload` # *Reload apache instead of restarting as an alternative option*
 
 ### Configuring PHP8.x
 
@@ -139,7 +143,7 @@ Refer [Uploading big files > 512MB — Nextcloud latest Administration Manual](h
 5. Create a test file (`/var/www/html/info.php`) to review the server's PHP information  
 6. Allow the user to review the server's PHP information in a browser through http://localhost/info.php. _Refer [How to Install LAMP Stack on Ubuntu 20.04 Server/Desktop](https://www.linuxbabe.com/ubuntu/install-lamp-stack-ubuntu-20-04-server-desktop)_
 7. Delete the test file after waiting for the user to press the enter key
-8. `sudo systemctl restart apache2` # Reload (or restart if needed)
+8. `sudo systemctl restart apache2` # *Reload (or restart if needed)*
 
 
 Login as admin and [check PHP under Administration Settings](https://192.168.254.56/nextcloud/index.php/settings/admin/serverinfo) for the following
@@ -156,13 +160,13 @@ The following is based on [Install NextCloud on Ubuntu 20.04 with Apache (LAMP S
 
 [Download the latest compatible version from nextcloud changelog](https://nextcloud.com/changelog/)
 
-Verify the installable file with `sha256sum ./Downloads/nextcloud-*.zip` against the [respective checksum in the sha256 file](https://nextcloud.com/changelog/) 
+Use `sha256sum ./Downloads/nextcloud-*.zip` # *Verify the installable file with against the [respective checksum in the sha256 file](https://nextcloud.com/changelog/)* 
 
-`sudo unzip ./Downloads/nextcloud-*.zip  -d /var/www/` # Extract the installable
+`sudo unzip ./Downloads/nextcloud-*.zip  -d /var/www/` # *Extract the installable*
 
-`sudo chown www-data:www-data /var/www/nextcloud/ -R` # Change owner and group from root to www-data
+`sudo chown www-data:www-data /var/www/nextcloud/ -R` # *Change owner and group from root to www-data*
 
-`sudo systemctl reload apache2` # Reload (or restart if needed) apache before completing the installation through the web browser.
+`sudo systemctl reload apache2` # *Reload (or restart if needed) apache before completing the installation through the web browser*
 
 ---
 
@@ -211,7 +215,7 @@ Log in to the nextcloud server with admin user previlleges and upgrade to nextcl
 1. Connect the device that hosts the nextcloud server to tailnet and change its name from `computername` to `<NC_server_name>` to avoid exposing the real name
 1. Generate a TLS certificate for the device using the following command. Refer [here on ideas to renew the TLS certificate](https://codingrelic.geekhold.com/2024/11/tailscale-certificates-with-nextcloud.html?m=1) . **Use the same command to renew it as well**
 
-`sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net` # Reference https://tailscale.com/kb/1080/cli
+`sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<whatever_filename-NC_server_name-tailnet_name>.ts.net.pem --key-file=/etc/ssl/private/tls-cert--<whatever_filename-NC_server_name-tailnet_name>.ts.net.key <NC_server_name>.<tailnet_name>.ts.net` # *Reference https://tailscale.com/kb/1080/cli*
 
 #### Alternatively create a systemd service which would automatically take care of renewing it too
 
@@ -236,11 +240,11 @@ WantedBy=multi-user.target
 EOF
 ```
 
-`sudo systemctl daemon-reload` # **Reload the systemctl daemon to read the new file, and each time after making any changes to the .service file**
+`sudo systemctl daemon-reload` # *Reload the systemctl daemon to read the new file, and each time after making any changes to the .service file*
 
-`sudo systemctl restart ask_tailscale_to_renew_TLS_certs.service` # **Restart (Start is not already running) the ask_tailscale_to_renew_TLS_certs systemd service**
+`sudo systemctl restart ask_tailscale_to_renew_TLS_certs.service` # *Restart (Start if not already running) the ask_tailscale_to_renew_TLS_certs systemd service*
 
-`sudo systemctl status ask_tailscale_to_renew_TLS_certs.service` # **Verify that the ask_tailscale_to_renew_TLS_certs systemd service is up and running**
+`sudo systemctl status ask_tailscale_to_renew_TLS_certs.service` # *Verify that the ask_tailscale_to_renew_TLS_certs systemd service is up and running*
 
 #### Edit nextcloud.conf and incorporate the DNS entries and TLS certificates in it as below
 
@@ -351,7 +355,7 @@ Do the following to put the nextcloud server back on track.
 
 ### Automatically start nextcloud server (Avoids the need for any user to login)
 1.  [Take care of trying to renew the Tailscale TLS certificate automatically](#alternatively-create-a-systemd-service-which-would-automatically-take-care-of-renewing-it-too)
-2.  `sudo systemctl enable ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer` # **Enable services to run automatically**
+2.  `sudo systemctl enable ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer` # *Enable services to run automatically*
 3.  In `/etc/fstab` make sure to have **`auto`** in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>auto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` so that it is mounted automatically. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
 
 
@@ -359,19 +363,20 @@ Do the following to put the nextcloud server back on track.
 
 `cd /var/www/nextcloud`
 
-`sudo -u www-data php occ db:add-missing-indices`
+`sudo -u www-data php occ db:add-missing-indices` # *Add missing indices manually while the instance continues to run*
 
 ### Delete older versions of all files for all users while the instance continues to run
 
 `cd /var/www/nextcloud`
 
-`sudo -u www-data php occ versions:cleanup`
+`sudo -u www-data php occ versions:cleanup` # *Delete older versions of all files for all users while the instance continues to run*
 
 ### Add user via occ command
 
 `cd /var/www/nextcloud`
 
-`sudo -E -u www-data php occ user:add --display-name="FNU LNU" --group="group-A" --group="group-B" username` # Create a user and assign them group-A and group-B. This will prompt for password, but not email. However, upon first login, this approach will still ask for the password to be reset through the link it has sent to the (non-existent) email. Ignore the message and login again.
+`sudo -E -u www-data php occ user:add --display-name="FNU LNU" --group="group-A" --group="group-B" username` # *Create a user and assign them group-A and group-B.* 
+This will prompt for password, but not email. However, upon first login, this approach will still ask for the password to be reset through the link it has sent to the non-existent email. Ignore the message and login again.
 
 Refer [the nextcloud admin manual](https://docs.nextcloud.com/server/latest/admin_manual/occ_command.html) for more occ commands
 
