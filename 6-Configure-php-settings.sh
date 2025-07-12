@@ -96,6 +96,7 @@ echo "Click and open http://localhost/info.php in a browser."
 echo "This script will now delete /var/www/html/info.php after your review."
 read -p "Press enter to continue with its deletion."
 rm /var/www/html/info.php # Remove the file after reviewing
+
 echo
 echo
 echo "Exit"
