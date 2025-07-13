@@ -232,8 +232,8 @@ User=root
 Group=root
 ExecStartPre=/bin/bash -c 'echo $(date)'
 ExecStart=/usr/bin/tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net
-StandardOutput=append:/var/log/apache2/tailscale_TLS_cert_renewal_service.log
-StandardError=append:/var/log/apache2/tailscale_TLS_cert_renewal_service.error
+StandardOutput=append:/var/log/tailscale_TLS_cert_renewal_service.log
+StandardError=append:/var/log/tailscale_TLS_cert_renewal_service.error
 
 [Install]
 WantedBy=multi-user.target
