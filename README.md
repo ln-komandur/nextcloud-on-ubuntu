@@ -113,11 +113,12 @@ MariaDB [(none)]> exit;
 
 ## Prepare the dedicated partition to save nextcloud server's data (user) files 
 
-1. Create a separate partition of desired size and format it as `ext4` using GParted / KDE Partition Manager 
+1. Create a separate partition of desired size and format it as `ext4` using GParted / KDE Partition Manager
+   1. Strongly consider [creating a LUKS encrypted partition](../linux-utils/blob/master/luks/ReadMe.md) and mounting it at `/media/nextcloud-data`. It is proven to work. Do not enter the passphrase in *Step 3c* of that page.
 2. Follow the steps in [Create common mount points for partitions shared by all users and include them in fstab](https://github.com/ln-komandur/linux-utils/blob/master/common-mountpoints.md)
-3. `sudo chown www-data:www-data /media/all-users-nextcloud-data/ -R` # *Assign the ownership of the mount point for the nextcloud server's data partition* to the web-root
-   1.  There is no need for other users need to share this partition with the web-root. Therefore, files and directories in this partition need not inherit the group id. So, ensure that the setgid bit is **not** set `ls -l /media/all-users-nextcloud-data/` # *list the permissions of the partition*
-   1.  In any case, unset the setgid bit with `sudo chmod -R g-s /media/all-users-nextcloud-data/` # *[Unset the setgid bit](https://linuxconfig.org/how-to-use-special-permissions-the-setuid-setgid-and-sticky-bits)*
+3. `sudo chown www-data:www-data /media/nextcloud-data/ -R` # *Assign the ownership of the mount point for the nextcloud server's data partition* to the web-root
+   1.  There is no need for other users need to share this partition with the web-root. Therefore, files and directories in this partition need not inherit the group id. So, ensure that the setgid bit is **not** set `ls -l /media/nextcloud-data/` # *list the permissions of the partition*
+   1.  In any case, unset the setgid bit with `sudo chmod -R g-s /media/nextcloud-data/` # *[Unset the setgid bit](https://linuxconfig.org/how-to-use-special-permissions-the-setuid-setgid-and-sticky-bits)*
 
 ---
 
@@ -174,7 +175,7 @@ Use `sha256sum ./Downloads/nextcloud-*.zip` # *Verify the installable file with 
 ...by accessing https://192.168.254.56/nextcloud/
 1. Accept the "Potential Security Risk Ahead" from self signed security certificates that the browser warns about, and Continue
 2. Create an admin user account (and the first user account) for the nextcloud server
-3. Give the path to the data folder as `/media/all-users-nextcloud-data/` along with credentials for mariaDB, and also enter the new username and password for the nextcloud database. **Note:** The browser WILL show errors because of trusted domains as 
+3. Give the path to the data folder as `/media/nextcloud-data/` along with credentials for mariaDB, and also enter the new username and password for the nextcloud database. **Note:** The browser WILL show errors because of trusted domains as 
       1. apache is already configured to redirect `ServerName 192.168.254.56` to `ServerAlias computername.local` http to https
       2. config.php is created only in this step and does not have `192.168.254.56` and `computername.local` listed as trusted_domains yet
 3. **Fix:** Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following to have both the IP address `192.168.254.56` and alias `computername.local`
@@ -350,7 +351,7 @@ Do the following to put the nextcloud server back on track.
 Use this method to avoid autostarts on older hardware to speed up boot-up
 
 1. `sudo systemctl disable phpsessionclean.timer php7.4-fpm.service mariadb.service apache2.service` # *Disable these 4 services so that they can be manually stopped and started by scripts*
-2. In `/etc/fstab` make sure to have **`noauto`** in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` for it to be mounted manually. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
+2. In `/etc/fstab` make sure to have **`noauto`** in the line `UID=<UUID of the partition><tab>/media/nextcloud-data<tab>ext4<tab>noauto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` for it to be mounted manually. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
 3. Download [start-nextcloud.sh](start-nextcloud.sh) (which also tries to renew the Tailscale TLS certificate everytime) and [stop-nextcloud.sh](stop-nextcloud.sh) to super user's home directory. 
 4. `chmod +x <script-name.sh>` # *Give execute permissions to both scrips*
 5. `sudo [start-nextcloud.sh](start-nextcloud.sh)` # *Start the server manually* and `sudo [stop-nextcloud.sh](stop-nextcloud.sh)` # *Stop the server manually* as needed
@@ -360,7 +361,7 @@ Use this method to avoid autostarts on older hardware to speed up boot-up
 Use this method to avoid the need for any user to login
 
 1.  `sudo systemctl enable ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer` # *Enable services to start automatically*
-2.  In `/etc/fstab` make sure to have **`auto`** in the line `UID=<UUID of the partition><tab>/media/all-users-nextcloud-data<tab>ext4<tab>auto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` so that it is mounted automatically. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
+2.  In `/etc/fstab` make sure to have **`auto`** in the line `UID=<UUID of the partition><tab>/media/nextcloud-data<tab>ext4<tab>auto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` so that it is mounted automatically. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
 3.  [Use a service to automatically try and renew the Tailscale TLS certificate on boot](#alternatively-create-a-systemd-service-which-would-automatically-take-care-of-renewing-it-too)
 
 
