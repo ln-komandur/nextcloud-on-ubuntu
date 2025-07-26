@@ -188,7 +188,7 @@ Use `sha256sum ./Downloads/nextcloud-*.zip` # *Verify the installable file with 
          ```
       2. the overwrite.cli.url 
          ```
-         'overwrite.cli.url' =>  'https://computername.local/nextcloud','https://192.168.254.56/nextcloud',
+         'overwrite.cli.url' =>  'computername.local/nextcloud','192.168.254.56/nextcloud',
          ```
       3. Include the line just below the above
          ```
@@ -278,7 +278,7 @@ EOF
   ),
 
 
-  'overwrite.cli.url' => 'https://computername.local/nextcloud',
+  'overwrite.cli.url' => 'computername.local/nextcloud',
   0 => 'https://local_ip_address(e.g.192.168.254.56)/nextcloud',
   1 => 'https://<NextCloudServerTailscaleName>.<TailnetName>.ts.net/nextcloud',
 
@@ -329,11 +329,11 @@ Do the following to put the nextcloud server back on track.
          ```
       2. the overwrite.cli.url from
          ```
-         'overwrite.cli.url' =>  'https://computername.local/nextcloud','https://192.168.254.56/nextcloud',
+         'overwrite.cli.url' =>  'computername.local/nextcloud','192.168.254.56/nextcloud',
          ```
          to
          ```
-         'overwrite.cli.url' => 'https://computername.local/nextcloud','https://192.168.0.27/nextcloud',
+         'overwrite.cli.url' => 'computername.local/nextcloud','192.168.0.27/nextcloud',
          ```         
 3. Edit the new IP address in `/etc/apache2/sites-available/nextcloud.conf` after the `ServerName` fields
 4. Restart apache server with `sudo systemctl restart apache2` and also reload it with `sudo systemctl reload apache2`
