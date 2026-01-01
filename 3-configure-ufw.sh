@@ -36,16 +36,16 @@ echo "UFW Status is : "
 ufw status
 echo
 echo "Opening and allowing incoming ssh TCP port 22"
-ufw allow from $subnet_mask_CIDR_format to any port 22 proto tcp comment \"opens\ and\ allows\ incoming\ ssh\ TCP\ port\ 22\"
+ufw allow from $subnet_mask_CIDR_format to any port 22 proto tcp comment \"Opens\ and\ allows\ incoming\ ssh\ TCP\ port\ 22\"
 echo
 echo "Opening and allowing incoming HTTP TCP port 80"
-ufw allow from $subnet_mask_CIDR_format to any port 80 proto tcp comment \"opens\ and\ allows\ incoming\ HTTP\ TCP\ port\ 80\"
+ufw allow from $subnet_mask_CIDR_format to any port 80 proto tcp comment \"Opens\ and\ allows\ incoming\ HTTP\ TCP\ port\ 80\"
 echo
 echo "Opening and allowing incoming HTTPS TCP port 443"
-ufw allow from $subnet_mask_CIDR_format to any port 443 proto tcp comment \"opens\ and\ allows\ incoming\ HTTPS\ TCP\ port\ 443\"
+ufw allow from $subnet_mask_CIDR_format to any port 443 proto tcp comment \"Opens\ and\ allows\ incoming\ HTTPS\ TCP\ port\ 443\"
 echo
 echo "Allowing multicast packets from the router"
-ufw allow in from $router_address to 224.0.0.0/24 comment \"To\ allow\ multicast\ packets\ from\ the\ router\"
+ufw allow in from $router_address to 224.0.0.0/24 comment \"Allows\ incoming\ multicast\ packets\ from\ the\ router\"
 echo
 echo "Refreshing UFW "
 ufw disable && ufw enable && ufw status # Refresh UFW
