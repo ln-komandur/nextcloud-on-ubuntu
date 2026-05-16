@@ -229,10 +229,9 @@ Requires=tailscaled.service
 After=tailscaled.service
 
 [Service]
-Type=oneshot
+Type=oneshot # When Type=oneshot, the timeout is disabled by default.
 User=root
 Group=root
-TimeoutStartSec=30  # Wait 30 seconds before considering the service failed 
 ExecStartPre=/bin/bash -c 'echo $(date)'
 ExecStart=/usr/bin/tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net
 StandardOutput=append:/var/log/tailscale_TLS_cert_renewal_service.log
