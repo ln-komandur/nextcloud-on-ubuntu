@@ -8,6 +8,7 @@
 4. [Installation on Linux — Nextcloud latest Administration Manual latest documentation](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html)
 5. [How To Install MariaDB 10.5 on Ubuntu 20.04 (Focal Fossa)](https://computingforgeeks.com/how-to-install-mariadb-on-ubuntu-focal-fossa/)
 6. Apache on Ubuntu Linux For Beginners [Part 1](https://www.linux.com/audience/devops/apache-ubuntu-linux-beginners/) and [Part 2 (how to enable SSL on Apache)](https://www.linux.com/training-tutorials/apache-ubuntu-linux-beginners-part-2/)
+7. [systemd.service and its options](https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html)
 
   **Note:** - Though almost all references use Ubuntu 20.04, the procedure has worked **perfectly well on Ubuntu 22.04**, Lubuntu 20.04 and Raspbian buster as detailed in earlier versions of this write-up. 
 
@@ -231,6 +232,7 @@ After=tailscaled.service
 Type=oneshot
 User=root
 Group=root
+TimeoutStartSec=30  # Wait 30 seconds before considering the service failed 
 ExecStartPre=/bin/bash -c 'echo $(date)'
 ExecStart=/usr/bin/tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net
 StandardOutput=append:/var/log/tailscale_TLS_cert_renewal_service.log
