@@ -219,12 +219,12 @@ Log in to the nextcloud server with admin user previlleges and upgrade to nextcl
 
 `sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net` # *Reference https://tailscale.com/kb/1080/cli*
 
-#### Alternatively create a systemd service which would automatically take care of renewing it too
+#### Alternatively create a systemd service which would automatically take care of renewing it if expiring within 14 days too
 
 ```
 sudo tee /lib/systemd/system/ask_tailscale_to_renew_TLS_certs.service <<EOF
 [Unit]
-Description=Ask tailscale to renew TLS certificates whenever the computer is started / re-started. Tailscale renews it if due per their policies. Reference https://tailscale.com/kb/1080/cli
+Description=Whenever the computer is started / re-started, ask tailscale to renew TLS certificates if expiring within 14 days. Tailscale renews it if due per their policies. Reference https://tailscale.com/kb/1080/cli
 Requires=tailscaled.service
 After=tailscaled.service
 
@@ -232,7 +232,14 @@ After=tailscaled.service
 Type=oneshot # When Type=oneshot, the timeout is disabled by default.
 User=root
 Group=root
-ExecStartPre=/bin/bash -c 'echo $(date)'
+
+# The inline logic checks the certificate. It first prints the current date in the log file.
+# openssl -checkend returns 0 if valid, so we invert it with ! to trigger the service when it is close to expiring.
+# openssl only needs to inspect the public .pem file to read the expiration date
+# 1209600 seconds equals exactly 14 days * 86400 seconds
+# We stores the exit status of openssl command in $status and then echo it to the log file and then return the same value (instead of the exit status of the echo overwritten in $?)
+ExecCondition=/usr/bin/bash -c 'echo $(date); ! /usr/bin/openssl x509 -checkend 1209600 -noout -in /etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem; status=$?; echo "Exited with $status"; exit $status'
+
 ExecStart=/usr/bin/tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net
 StandardOutput=append:/var/log/tailscale_TLS_cert_renewal_service.log
 StandardError=append:/var/log/tailscale_TLS_cert_renewal_service.error
@@ -363,7 +370,7 @@ Use this method to avoid the need for any user to login
 
 1.  `sudo systemctl enable ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer` # *Enable services to start automatically*
 2.  In `/etc/fstab` make sure to have **`auto`** in the line `UID=<UUID of the partition><tab>/media/nextcloud-data<tab>ext4<tab>auto,nosuid,nodev,noexec,nouser,nofail<tab>0<tab>0` so that it is mounted automatically. Also make sure the line ends with "0" (i.e. fsck will not be run on this partition at boot
-3.  [Use a service to automatically try and renew the Tailscale TLS certificate on boot](#alternatively-create-a-systemd-service-which-would-automatically-take-care-of-renewing-it-too)
+3.  [Use a service to automatically try and renew the Tailscale TLS certificate on boot](#alternatively-create-a-systemd-service-which-would-automatically-take-care-of-renewing-it-if-expiring-within-14-days-too)
 
 
 ### Add missing indices manually while the instance continues to run
