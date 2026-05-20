@@ -237,7 +237,7 @@ Group=root
 # openssl -checkend returns 0 if valid, so we invert it with ! to trigger the service when it is close to expiring.
 # openssl only needs to inspect the public .pem file to read the expiration date
 # 1209600 seconds equals exactly 14 days * 86400 seconds
-# We stores the exit status of openssl command in $status and then echo it to the log file and then return the same value (instead of the exit status of the echo overwritten in $?)
+# We store the exit status of openssl command in $status and then echo it to the log file. We then return the same value (as the echo command would have overwritten $?)
 ExecCondition=/usr/bin/bash -c 'echo $(date); ! /usr/bin/openssl x509 -checkend 1209600 -noout -in /etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem; status=$?; echo "Exited with $status"; exit $status'
 
 ExecStart=/usr/bin/tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net
