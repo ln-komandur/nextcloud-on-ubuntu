@@ -237,10 +237,10 @@ Environment=KEY_FILE_PATH=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleNam
 Environment=DOMAIN=<NextCloudServerTailscaleName>.<TailnetName>.ts.net
 Environment=RENEWAL_WINDOW=1209600 #14 days*86400 seconds
 
-# The inline logic checks the certificate. It first prints the current date in the log file.
-# openssl -checkend returns 0 if valid, so we invert it with ! to trigger the service when it is close to expiring.
-# OpenSSL only needs to inspect the public .pem file to read the expiration date
-# We store the exit status of openssl command in $status and then echo it to the log file. We then return the same value (as the echo command would have overwritten $?)
+# The inline logic checks the certificate. First print the current date in the log file.
+# openssl -checkend returns 0 if valid, so invert it with ! to trigger the service when its expiration is within the renewal window.
+# openssl only needs to inspect the public .pem file to read the expiration date.
+# Store the exit status of openssl command in $status and then echo it to the log file. Then return the same value as commands executed later like echo would have overwritten $?
 ExecCondition=/usr/bin/bash -c 'echo $(date); ! /usr/bin/openssl x509 -checkend "$RENEWAL_WINDOW" -noout -in "$PEM_FILE_PATH"; status=$?; echo "Exit status: $status"; exit $status'
 
 ExecStart=/usr/bin/tailscale cert --cert-file=${PEM_FILE_PATH} --key-file=${KEY_FILE_PATH} ${DOMAIN}
