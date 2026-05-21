@@ -232,15 +232,18 @@ After=tailscaled.service
 Type=oneshot # When Type=oneshot, the timeout is disabled by default.
 User=root
 Group=root
+Environment=PEM_FILE_PATH=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem
+Environment=KEY_FILE_PATH=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key
+Environment=DOMAIN=<NextCloudServerTailscaleName>.<TailnetName>.ts.net
+Environment=RENEWAL_WINDOW=1209600 #14 days*86400 seconds
 
 # The inline logic checks the certificate. It first prints the current date in the log file.
 # openssl -checkend returns 0 if valid, so we invert it with ! to trigger the service when it is close to expiring.
-# openssl only needs to inspect the public .pem file to read the expiration date
-# 1209600 seconds equals exactly 14 days * 86400 seconds
+# OpenSSL only needs to inspect the public .pem file to read the expiration date
 # We store the exit status of openssl command in $status and then echo it to the log file. We then return the same value (as the echo command would have overwritten $?)
-ExecCondition=/usr/bin/bash -c 'echo $(date); ! /usr/bin/openssl x509 -checkend 1209600 -noout -in /etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem; status=$?; echo "Exited with $status"; exit $status'
+ExecCondition=/usr/bin/bash -c 'echo $(date); ! /usr/bin/openssl x509 -checkend "$RENEWAL_WINDOW" -noout -in "$PEM_FILE_PATH"; status=$?; echo "Exit status: $status"; exit $status'
 
-ExecStart=/usr/bin/tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net
+ExecStart=/usr/bin/tailscale cert --cert-file=${PEM_FILE_PATH} --key-file=${KEY_FILE_PATH} ${DOMAIN}
 StandardOutput=append:/var/log/tailscale_TLS_cert_renewal_service.log
 StandardError=append:/var/log/tailscale_TLS_cert_renewal_service.error
 
