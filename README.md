@@ -178,8 +178,8 @@ Use `sha256sum ./Downloads/nextcloud-*.zip` # *Verify the installable file with 
 2. Create an admin user account (and the first user account) for the nextcloud server
 3. Give the path to the data folder as `/media/nextcloud-data/` along with credentials for mariaDB, and also enter the new username and password for the nextcloud database. **Note:** The browser WILL show errors because of trusted domains as 
       1. apache is already configured to redirect `ServerName 192.168.254.56` to `ServerAlias computername.local` http to https
-      2. config.php is created only in this step and does not have `192.168.254.56` and `computername.local` listed as trusted_domains yet
-3. **Fix:** Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following to have both the IP address `192.168.254.56` and alias `computername.local`
+      2. `config.php` is created only in this step and does not have `192.168.254.56` and `computername.local` listed as trusted_domains yet
+3. **Fix:** Open the `config.php` file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following to have both the IP address `192.168.254.56` and alias `computername.local`
       1. trusted domains
          ```
          'trusted_domains' =>
@@ -278,7 +278,7 @@ EOF
         SSLCertificateKeyFile /etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key
 ```
 
-#### Edit config.php for trusted domains as below
+#### Edit `config.php` for trusted domains as below
 
 ```
   'trusted_domains' => 
@@ -322,7 +322,7 @@ Imagine the nextcloud server's IP address changed from `192.168.254.56` to `192.
 Do the following to put the nextcloud server back on track.
 
 1. Log onto the nextcloud server box (Physically / Virtually e.t.c)
-2. Open the config.php file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following with the new IP address
+2. Open the `config.php` file with `sudo nano /var/www/nextcloud/config/config.php` and edit the following with the new IP address
       1. the trusted domains from
          ```
          'trusted_domains' =>
