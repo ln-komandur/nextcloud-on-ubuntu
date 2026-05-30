@@ -217,7 +217,7 @@ Log in to the nextcloud server with admin user previlleges and upgrade to nextcl
 1. Connect the device that hosts the nextcloud server to tailnet and change its name from `computername` to `<NC_server_name>` to avoid exposing the real name
 1. Generate a TLS certificate for the device using the following command. Refer [here on ideas to renew the TLS certificate](https://codingrelic.geekhold.com/2024/11/tailscale-certificates-with-nextcloud.html?m=1) . **Use the same command to renew it as well**
 
-`sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net` # *Reference https://tailscale.com/kb/1080/cli*
+`sudo tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.crt --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net` # *Reference https://tailscale.com/kb/1080/cli*
 
 #### Alternatively create a systemd service which would automatically take care of renewing it if expiring within 14 days too
 
@@ -258,7 +258,7 @@ EOF
 
 `sudo systemctl status ask_tailscale_to_renew_TLS_certs.service` # *Verify that the ask_tailscale_to_renew_TLS_certs systemd service is up and running*
 
-#### Edit nextcloud.conf and incorporate the DNS entries and TLS certificates in it as below
+#### Edit `nextcloud.conf` and incorporate the DNS entries and TLS certificates in it as below
 
 ```
 <VirtualHost *:80>
