@@ -1,10 +1,10 @@
 #!/bin/bash
+
 #ref: https://unix.stackexchange.com/questions/28791/prompt-for-sudo-password-and-programmatically-elevate-privilege-in-bash-script
 #ref: https://askubuntu.com/a/30157/8698
-
 if (($EUID != 0)); then
   if [[ -t 1 ]]; then
-#https://unix.stackexchange.com/questions/218715/what-does-t-1-do
+    #https://unix.stackexchange.com/questions/218715/what-does-t-1-do
     sudo "$0" "$@"
   else
     exec 1>output_file
@@ -12,71 +12,62 @@ if (($EUID != 0)); then
   fi
   exit
 fi
+
 echo "This script reports the mount status of the NextCloud Data partition and mounts it too. It then"
 echo "enables UFW and starts nextcloud services namely PHP Session Clean timer, PHP8.3fpm, MariaDB, Apache2."
 echo "AUTHENTICATION SUCCESSFUL. You are executing the script as" $USER
 echo
+
 echo
 echo "---------------------------------------------------------------------------------------------------"
 echo "Mount status of /dev/sda6"
 echo "---------------------------------------------------------------------------------------------------"
-findmnt /dev/sda6
-
-#echo
-#echo
-#echo "---------------------------------------------------------------------------------------------------"
-#echo "Unmount /dev/sda6 if it is already mounted for any other reasons whatsoever"
-#echo "---------------------------------------------------------------------------------------------------"
-#umount /dev/sda6
-#echo
-#echo
-#echo "---------------------------------------------------------------------------------------------------"
-#echo "Run fsck /dev/sda6 prior to mounting again"
-#echo "---------------------------------------------------------------------------------------------------"
-#fsck -f -r /dev/sda6
+findmnt /dev/sda6 # Show current mount status of the Nextcloud data partition before attempting to mount
 
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
 echo "Mounting /dev/sda6"
 echo "---------------------------------------------------------------------------------------------------"
-mount /dev/sda6
+mount /dev/sda6 # Mount the dedicated Nextcloud data partition — uses the options defined in /etc/fstab
+
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
 echo "Enable Firewall"
 echo "---------------------------------------------------------------------------------------------------"
-ufw enable
+ufw enable # Re-enable UFW firewall before starting services to ensure traffic is filtered from the start
+
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
 echo "Firewall status"
 echo "---------------------------------------------------------------------------------------------------"
-ufw status
-
-#echo
-#echo
-#echo "---------------------------------------------------------------------------------------------------"
-#echo "Status of ufw.service, phpsessionclean.timer, php8.3-fpm.service, mariadb.service, apache2.service"
-#echo "---------------------------------------------------------------------------------------------------"
-#systemctl status ufw.service phpsessionclean.timer php8.3-fpm.service mariadb.service apache2.service
+ufw status # Confirm UFW is active and show current rules
 
 echo
 echo
 echo "---------------------------------------------------------------------------------------------------"
 echo "Starting ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer"
 echo "---------------------------------------------------------------------------------------------------"
-systemctl start ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer   
+systemctl start ufw.service apache2.service mariadb.service php8.3-fpm.service phpsessionclean.timer # Start all Nextcloud-related services in one command
 
-#echo
-#echo
-#echo "---------------------------------------------------------------------------------------------------"
-#echo "Attempting to renew tailscale TLS certificate (if due)"
-#echo "---------------------------------------------------------------------------------------------------"
-#if tailscale up; then # If tailscale is installed and can be brought up, then
-#    echo "Tailscape is up. Renewing tailscale TLS certificate if due"
-#    tailscale cert --cert-file=/etc/ssl/certs/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.pem --key-file=/etc/ssl/private/tls-cert-<NextCloudServerTailscaleName_TailnetName_ts_net>.ts.net.key <NextCloudServerTailscaleName>.<TailnetName>.ts.net # Reference https://tailscale.com/kb/1080/cli
-#fi
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
+echo "Ensuring tailscaled is running (required for Tailscale Serve)"
+echo "---------------------------------------------------------------------------------------------------"
+systemctl start tailscaled.service # Start tailscaled if not already running — Tailscale Serve requires it to proxy HTTPS to Apache
+echo "tailscaled status:"
+systemctl is-active tailscaled.service # Confirm tailscaled is active — should print: active
+
+echo
+echo
+echo "---------------------------------------------------------------------------------------------------"
+echo "Checking Tailscale Serve status"
+echo "(Tailscale Serve resumes automatically when tailscaled starts — no manual action needed)"
+echo "---------------------------------------------------------------------------------------------------"
+tailscale serve status # Verify Tailscale Serve is running and proxying HTTPS to localhost:80
 
 echo
 echo
