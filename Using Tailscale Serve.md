@@ -18,12 +18,12 @@ Tailscale owns port 443 and handles all TLS. Apache only ever sees plain HTTP on
 - Ubuntu with LAMP stack and Nextcloud installed
 - Tailscale installed and connected:
   ```bash
-  sudo tailscale status
+  sudo tailscale status # Verify Tailscale is installed and connected before proceeding
   ```
 - **Avahi daemon** installed for `computername.local` mDNS resolution:
   ```bash
-  sudo apt install avahi-daemon
-  sudo systemctl enable --now avahi-daemon
+  sudo apt install avahi-daemon # Install mDNS daemon so computername.local resolves on the LAN
+  sudo systemctl enable --now avahi-daemon # Enable avahi at boot and start it immediately
   ```
 - **HTTPS certificates enabled** in your Tailscale admin console — required for automatic TLS provisioning on your `*.ts.net` domain:
   > Tailscale Admin Console → **DNS** → **HTTPS Certificates** → **Enable**
@@ -35,7 +35,7 @@ Tailscale owns port 443 and handles all TLS. Apache only ever sees plain HTTP on
 ```bash
 for path in /var/www/nextcloud /var/www/html/nextcloud; do
     [ -f "$path/config/config.php" ] && echo "✓ Found at $path" || echo "✗ Not at $path"
-done
+done # Check both common Nextcloud install locations — the correct path is needed throughout this guide
 ```
 
 > This guide assumes Nextcloud is installed at `/var/www/nextcloud`. Adjust all paths if yours differs.
@@ -47,8 +47,8 @@ done
 Apache must only listen on port 80. Port 443 belongs to Tailscale Serve — having Apache also try to bind to it prevents Apache from starting.
 
 ```bash
-grep -r "Listen" /etc/apache2/ports.conf /etc/apache2/sites-enabled/
-sudo nano /etc/apache2/ports.conf
+grep -r "Listen" /etc/apache2/ports.conf /etc/apache2/sites-enabled/ # Check what ports Apache is currently configured to bind to
+sudo nano /etc/apache2/ports.conf # Edit ports config — remove Listen 443, keep only Listen 80
 ```
 
 Set the file to:
@@ -83,18 +83,16 @@ Listen 80
 ## Step 3: Disable Apache SSL
 
 ```bash
-sudo a2dissite default-ssl
-sudo a2dismod ssl
+sudo a2dissite default-ssl # Disable the default SSL virtual host — not needed, Tailscale handles TLS
+sudo a2dismod ssl # Disable the SSL module — Apache does not serve HTTPS in this setup
 ```
-
-SSL is handled entirely by Tailscale. Apache does not need the `ssl` module.
 
 ---
 
 ## Step 4: Reset any existing Tailscale Serve config
 
 ```bash
-sudo tailscale serve reset
+sudo tailscale serve reset # Clear any prior Tailscale Serve configuration before setting up fresh
 ```
 
 ---
@@ -102,7 +100,7 @@ sudo tailscale serve reset
 ## Step 5: Configure `/etc/apache2/sites-available/nextcloud.conf`
 
 ```bash
-sudo nano /etc/apache2/sites-available/nextcloud.conf
+sudo nano /etc/apache2/sites-available/nextcloud.conf # Create or edit the Nextcloud Apache virtual host
 ```
 
 ```apache
@@ -162,7 +160,7 @@ sudo nano /etc/apache2/sites-available/nextcloud.conf
 ## Step 6: Configure `/var/www/nextcloud/config/config.php`
 
 ```bash
-sudo nano /var/www/nextcloud/config/config.php
+sudo nano /var/www/nextcloud/config/config.php # Edit Nextcloud's main config to add Tailscale-aware settings
 ```
 
 Add or update these settings. **Do not change** `instanceid`, `passwordsalt`, `secret`, `version`, or any database credentials.
@@ -203,25 +201,23 @@ array (
 ## Step 7: Enable Apache modules and activate the site
 
 ```bash
-sudo a2enmod headers rewrite alias   # alias is required for the Alias directive in nextcloud.conf
-sudo a2ensite nextcloud.conf         # Enable Nextcloud site
-sudo a2dissite 000-default.conf      # Disable default site (prevents it catching requests before nextcloud.conf)
-sudo apachectl configtest            # Must show: Syntax OK
-sudo systemctl restart apache2       # Apply all changes
+sudo a2enmod headers rewrite alias # Enable required modules: headers for X-Forwarded-* and HSTS, rewrite for Nextcloud .htaccess rules, alias for the Alias /nextcloud directive
+sudo a2ensite nextcloud.conf # Enable the Nextcloud virtual host configuration
+sudo a2dissite 000-default.conf # Disable the default Apache site so it does not intercept requests before nextcloud.conf
+sudo apachectl configtest # Validate Apache configuration syntax — must show Syntax OK before restarting
+sudo systemctl restart apache2 # Apply all configuration changes
 ```
 
 Verify only the Nextcloud site is active:
 
 ```bash
-ls -la /etc/apache2/sites-enabled/
-# Should show only nextcloud.conf — no 000-default.conf symlink
+ls -la /etc/apache2/sites-enabled/ # Should show only nextcloud.conf — no 000-default.conf symlink
 ```
 
 Verify Apache is only on port 80:
 
 ```bash
-sudo ss -tlnp | grep apache2
-# Should show :80 only — nothing on :443
+sudo ss -tlnp | grep apache2 # Should show :80 only — nothing on :443
 ```
 
 ---
@@ -229,8 +225,8 @@ sudo ss -tlnp | grep apache2
 ## Step 8: Ensure Tailscale daemon starts at boot
 
 ```bash
-sudo systemctl enable tailscaled
-sudo systemctl is-enabled tailscaled   # Should show: enabled
+sudo systemctl enable tailscaled # Mark tailscaled to start automatically at every boot
+sudo systemctl is-enabled tailscaled # Confirm — should print: enabled
 ```
 
 ---
@@ -238,15 +234,13 @@ sudo systemctl is-enabled tailscaled   # Should show: enabled
 ## Step 9: Start Tailscale Serve
 
 ```bash
-sudo tailscale serve --bg http://localhost:80
+sudo tailscale serve --bg http://localhost:80 # Start Tailscale Serve — proxies HTTPS on tailnet to Apache on port 80. --bg saves this config persistently so it resumes automatically after every reboot
 ```
-
-> The `--bg` flag saves this configuration persistently in the Tailscale daemon's state. Tailscale Serve **automatically resumes after reboots** when `tailscaled` starts — no separate systemd service is needed.
 
 Verify it is running:
 
 ```bash
-sudo tailscale serve status
+sudo tailscale serve status # Confirm Tailscale Serve is active and showing the correct proxy configuration
 ```
 
 Expected output:
@@ -261,7 +255,7 @@ https://your-machine.tail1234.ts.net (tailnet only)
 ## Step 10: Clear Nextcloud cache
 
 ```bash
-sudo -u www-data php /var/www/nextcloud/occ maintenance:repair
+sudo -u www-data php /var/www/nextcloud/occ maintenance:repair # Clear Nextcloud's internal cache and repair any inconsistencies after config.php changes
 ```
 
 ---
@@ -281,7 +275,7 @@ sudo -u www-data php /var/www/nextcloud/occ maintenance:repair
 Tailscale Serve manages TLS certificates internally and renews them automatically. To access the raw certificate files if needed by another service:
 
 ```bash
-sudo tailscale cert your-machine.tail1234.ts.net
+sudo tailscale cert your-machine.tail1234.ts.net # Generate and store the TLS certificate files on disk if needed for another service
 # Stored at:
 #   /var/lib/tailscale/your-machine.tail1234.ts.net.crt
 #   /var/lib/tailscale/your-machine.tail1234.ts.net.key
@@ -298,16 +292,19 @@ You do not need to manage these files for this setup — Tailscale handles every
 Tailscale Serve is already bound to port 443. Ensure `ports.conf` has no `Listen 443` and the SSL module is disabled:
 
 ```bash
-sudo a2dismod ssl
-sudo apachectl configtest
-sudo systemctl restart apache2
+sudo a2dismod ssl # Disable SSL module to remove the port 443 conflict with Tailscale
+sudo apachectl configtest # Verify configuration is valid after the change
+sudo systemctl restart apache2 # Start Apache — should now bind to port 80 only
 ```
 
 ### "Access through untrusted domain" error in Nextcloud
 
 The hostname used in the browser is not in `trusted_domains` in `config.php`. Add it:
 
-```php
+```bash
+sudo nano /var/www/nextcloud/config/config.php # Add the missing hostname to the trusted_domains array
+```
+```
 'trusted_domains' =>
 array (
   // ... add the missing hostname here
@@ -319,8 +316,8 @@ array (
 Confirm the `alias` module is enabled and Apache was restarted after enabling it:
 
 ```bash
-sudo a2enmod alias
-sudo systemctl restart apache2
+sudo a2enmod alias # Enable the Apache alias module required for the Alias /nextcloud directive
+sudo systemctl restart apache2 # Apply the module change
 ```
 
 Also confirm the Alias path in `nextcloud.conf` matches the actual Nextcloud installation path found in Step 1.
@@ -336,9 +333,9 @@ Your browser has cached an HSTS policy for the local hostname from a previous Ap
 **Ungoogled Chromium** (`chrome://net-internals` may be unavailable):
 ```bash
 # Close the browser completely first, then:
-rm ~/.config/chromium/Default/TransportSecurity
+rm ~/.config/chromium/Default/TransportSecurity # Delete the browser's HSTS state file — clears all cached HSTS policies
 # or if ungoogled-chromium uses its own profile directory:
-rm ~/.config/ungoogled-chromium/Default/TransportSecurity
+rm ~/.config/ungoogled-chromium/Default/TransportSecurity # Alternative path for ungoogled-chromium
 ```
 
 **Firefox:**
@@ -353,15 +350,14 @@ Likely cause: `overwriteprotocol` is applying to local requests and Nextcloud is
 Also check logs while loading the page:
 
 ```bash
-sudo tail -f /var/log/apache2/nextcloud_error.log
-sudo tail -f /var/www/nextcloud/data/nextcloud.log
+sudo tail -f /var/log/apache2/nextcloud_error.log # Stream Apache error log — check for permission or path errors
+sudo tail -f /var/www/nextcloud/data/nextcloud.log # Stream Nextcloud application log — check for PHP or config errors
 ```
 
 Check what REMOTE_ADDR Apache sees for your local request:
 
 ```bash
-sudo tail -f /var/log/apache2/nextcloud_access.log
-# Load the page in the browser and check the IP shown — should be your LAN IP, not 127.0.0.1
+sudo tail -f /var/log/apache2/nextcloud_access.log # Load the page in the browser and check the IP shown — should be your LAN IP, not 127.0.0.1
 ```
 
 ### Tailscale Serve command gives a syntax error
@@ -373,7 +369,7 @@ The Tailscale Serve CLI syntax changed in v1.52. Use the updated command:
 # sudo tailscale serve --bg https / http://localhost:80
 
 # New syntax (v1.52+):
-sudo tailscale serve --bg http://localhost:80
+sudo tailscale serve --bg http://localhost:80 # Proxy HTTPS on tailnet to Apache on port 80 — --bg makes this persistent across reboots
 ```
 
 ### Tailscale Serve does not resume after reboot
@@ -381,7 +377,7 @@ sudo tailscale serve --bg http://localhost:80
 Ensure the `--bg` flag was used when starting Serve, and that `tailscaled` is enabled at boot:
 
 ```bash
-sudo systemctl enable tailscaled
-sudo tailscale serve --bg http://localhost:80   # re-run with --bg if it was started without it
-sudo tailscale serve status
+sudo systemctl enable tailscaled # Ensure Tailscale daemon starts at boot — required for Serve to resume
+sudo tailscale serve --bg http://localhost:80 # Re-run with --bg if it was originally started without it — this saves the config persistently
+sudo tailscale serve status # Verify Tailscale Serve is running with the correct configuration
 ```
