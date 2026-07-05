@@ -113,7 +113,7 @@ MariaDB [(none)]> exit;
 ## Prepare the dedicated partition to save nextcloud server's data (user) files
 
 1. Create a separate partition of desired size and format it as `ext4` using GParted / KDE Partition Manager
-   1. Strongly consider [creating a LUKS encrypted partition](https://github.com/ln-komandur/linux-utils/blob/luks/ReadMe.md) and mounting it at `/media/nextcloud-data`
+   1. Strongly consider [creating a LUKS encrypted partition](https://github.com/ln-komandur/linux-utils/blob/master/luks/ReadMe.md) and mounting it at `/media/nextcloud-data`
 2. Follow the steps in [Create common mount points for partitions shared by all users and include them in fstab](https://github.com/ln-komandur/linux-utils/blob/master/common-mountpoints.md)
 3. `sudo chown www-data:www-data /media/nextcloud-data/ -R` # *Assign ownership of the Nextcloud data partition to the Apache web-root user*
    1. `ls -l /media/nextcloud-data/` # *Verify the setgid bit is not set — other users do not need to share this partition with www-data*
