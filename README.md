@@ -308,14 +308,12 @@ array (
 ),
 ```
 
-#### Tailscale certificate storage
+#### Explicitly Generate & Store Tailscale certificate for other services if needed
+**Note:** Tailscale Serve manages and renews certificates automatically so you do not need to run this for normal Nextcloud use if you have set it up per the rest of the instructions
 
 ```bash
 sudo tailscale cert your-machine.tail1234.ts.net # Explicitly generate certificate files on disk if needed by another service
-# Stored at:
-#   /var/lib/tailscale/your-machine.tail1234.ts.net.crt
-#   /var/lib/tailscale/your-machine.tail1234.ts.net.key
-# Note: Tailscale Serve manages and renews these automatically — you do not need to run this for normal Nextcloud use
+# your-machine.tail1234.ts.net.crt & your-machine.tail1234.ts.net.key will be stored in the directory from where the command is executed
 ```
 
 #### iOS NextCloud Client App permissions
